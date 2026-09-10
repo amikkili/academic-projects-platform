@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight, BookOpen, Code2, Mic2, GitBranch,
   Star, Users, Trophy, Zap, ChevronRight, Brain,
-  Globe, Cpu, BarChart2, Smartphone, Shield, Search,
+  Globe, Cpu, BarChart2, Smartphone, Shield, Search, Target,
 } from 'lucide-react'
 import ProjectCard from '../components/ProjectCard'
 import { projects, categories } from '../data/projects'
@@ -157,36 +157,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Project Fit Recommender Banner ── */}
-      <section className="py-16 bg-white">
+      {/* ── Smart Tools ── */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-brand-navy via-[#1B3A6B] to-[#164E63] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 overflow-hidden relative">
-            {/* Decorative blob */}
-            <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-brand-teal/10 blur-3xl pointer-events-none" />
-            <div className="absolute -left-10 -bottom-10 w-64 h-64 rounded-full bg-brand-orange/10 blur-3xl pointer-events-none" />
-
-            <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-brand-orange/20 border border-brand-orange/30 flex items-center justify-center">
-              <Search size={36} className="text-brand-orange" />
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-navy/10 text-brand-navy text-sm font-bold mb-4">
+              <Zap size={13} fill="currentColor" /> Smart Tools
             </div>
+            <h2 className="section-title">Tools to Help You Succeed</h2>
+            <p className="section-sub">Beyond just projects — predict, plan, and prepare smarter for your semester</p>
+          </div>
 
-            <div className="flex-1 relative">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-bold mb-3">
-                <Zap size={11} fill="currentColor" /> NEW
+          <div className="grid sm:grid-cols-2 gap-6">
+            {/* Project Fit Card */}
+            <div className="bg-gradient-to-br from-brand-navy via-[#1B3A6B] to-[#164E63] rounded-3xl p-8 relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full bg-brand-teal/10 blur-3xl pointer-events-none" />
+              <div className="w-14 h-14 rounded-2xl bg-brand-orange/20 border border-brand-orange/30 flex items-center justify-center mb-5">
+                <Search size={26} className="text-brand-orange" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-                Not sure which project to pick?
-              </h2>
-              <p className="text-white/70 text-base leading-relaxed max-w-xl">
-                Tell us what you already know — Python, React, Arduino, whatever — and we'll rank all projects by how well they match your skill set, with a clear list of what you'd need to learn.
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-bold mb-3">
+                <Zap size={11} fill="currentColor" /> FEATURE 2
+              </div>
+              <h3 className="text-xl md:text-2xl font-extrabold text-white mb-2">Project Fit Recommender</h3>
+              <p className="text-white/65 text-sm leading-relaxed mb-6">
+                Tell us your skills — Python, React, Arduino — and we'll rank all projects by match %, with a list of what you'd need to learn.
               </p>
+              <Link
+                to="/project-fit"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-brand-orange text-white font-bold rounded-2xl hover:bg-amber-500 active:scale-95 transition-all text-sm"
+              >
+                Find My Project <ArrowRight size={16} />
+              </Link>
             </div>
 
-            <Link
-              to="/project-fit"
-              className="flex-shrink-0 flex items-center gap-2 px-7 py-4 bg-brand-orange text-white font-bold rounded-2xl hover:bg-amber-500 active:scale-95 transition-all shadow-lg shadow-black/20 whitespace-nowrap relative"
-            >
-              Find My Project <ArrowRight size={18} />
-            </Link>
+            {/* Internal Marks Card */}
+            <div className="bg-gradient-to-br from-[#1B3A6B] to-[#312e81] rounded-3xl p-8 relative overflow-hidden group">
+              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full bg-purple-400/10 blur-3xl pointer-events-none" />
+              <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-5">
+                <Target size={26} className="text-purple-300" />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-purple-200 text-xs font-bold mb-3">
+                <Zap size={11} fill="currentColor" /> FEATURE 3
+              </div>
+              <h3 className="text-xl md:text-2xl font-extrabold text-white mb-2">Internal Marks Estimator</h3>
+              <p className="text-white/65 text-sm leading-relaxed mb-6">
+                Enter your attendance, test scores, and lab marks — get an instant grade prediction and tips on which areas to improve.
+              </p>
+              <Link
+                to="/internal-marks"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 border border-white/25 text-white font-bold rounded-2xl hover:bg-white/25 active:scale-95 transition-all text-sm backdrop-blur-sm"
+              >
+                Estimate My Marks <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

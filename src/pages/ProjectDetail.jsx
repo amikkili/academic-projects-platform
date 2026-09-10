@@ -120,12 +120,12 @@ export default function ProjectDetail() {
       {/* Tab bar */}
       <div className="sticky top-16 z-30 bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 py-2">
+          <div className="flex gap-1 py-2 overflow-x-auto scrollbar-none">
             {TABS.map(({ id: tid, label, icon: Icon }) => (
               <button
                 key={tid}
                 onClick={() => setActiveTab(tid)}
-                className={`tab-btn flex items-center gap-2 ${
+                className={`tab-btn flex items-center gap-2 whitespace-nowrap flex-shrink-0 ${
                   activeTab === tid ? 'tab-btn-active' : 'tab-btn-inactive'
                 }`}
               >

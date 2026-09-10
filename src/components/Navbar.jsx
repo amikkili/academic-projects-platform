@@ -16,10 +16,11 @@ export default function Navbar() {
   useEffect(() => setOpen(false), [pathname])
 
   const navLinks = [
-    { to: '/',            label: 'Home' },
-    { to: '/projects',    label: 'Projects' },
-    { to: '/project-fit', label: 'Find My Project' },
-    { to: '/about',       label: 'About' },
+    { to: '/',               label: 'Home' },
+    { to: '/projects',       label: 'Projects' },
+    { to: '/project-fit',    label: 'Project Fit' },
+    { to: '/internal-marks', label: 'Mark Estimator' },
+    { to: '/about',          label: 'About' },
   ]
 
   return (

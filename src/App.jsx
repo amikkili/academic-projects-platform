@@ -6,6 +6,7 @@ import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
 import VivaMockTest from './pages/VivaMockTest'
 import ProjectFit from './pages/ProjectFit'
+import InternalMarksEstimator from './pages/InternalMarksEstimator'
 import About from './pages/About'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/projects/:id"            element={<ProjectDetail />} />
           <Route path="/projects/:id/viva-test"  element={<VivaMockTest />} />
           <Route path="/project-fit"             element={<ProjectFit />} />
+          <Route path="/internal-marks"          element={<InternalMarksEstimator />} />
           <Route path="/about"                   element={<About />} />
           <Route path="*"                        element={<Projects />} />
         </Routes>
