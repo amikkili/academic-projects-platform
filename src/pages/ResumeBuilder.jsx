@@ -357,7 +357,8 @@ export default function ResumeBuilder() {
     const yrs = isExp ? parseFloat(project.exp_years) || 0 : 0
     setAiLoading(true); setAiError(''); setAiBullets(null); setAiSummary(null)
     try {
-      const res = await fetch('http://localhost:8000/api/resume/generate', {
+      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api'
+      const res = await fetch(`${apiBase}/resume/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ skills, years_exp: yrs, max_bullets: 10 }),
