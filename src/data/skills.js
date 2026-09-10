@@ -80,7 +80,9 @@ export const projectSkills = {
   },
 }
 
-// Compute match score for one project given selected skills (Set of strings)
+// Compute Jaccard-based match score for one project given selected skills (Set of strings).
+// Jaccard(user ∩ required) / |required| measures "coverage of what the project needs".
+// Helpful skills add a 20-point bonus on top of the 80-point required score.
 export function computeMatch(projectId, selectedSkills) {
   const { required, helpful } = projectSkills[projectId] || { required: [], helpful: [] }
 
@@ -88,24 +90,56 @@ export function computeMatch(projectId, selectedSkills) {
   const knownHelpful  = helpful.filter(s => selectedSkills.has(s))
   const missingReq    = required.filter(s => !selectedSkills.has(s))
 
-  // Score: required skills count 80% of weight, helpful 20%
-  const reqScore  = required.length  > 0 ? (knownRequired.length / required.length)  * 80 : 80
-  const helpScore = helpful.length   > 0 ? (knownHelpful.length  / helpful.length)   * 20 : 20
-  const total     = Math.round(reqScore + helpScore)
+  // Jaccard coverage: intersection / |required|  (0-100)
+  const jaccard = required.length > 0
+    ? Math.round((knownRequired.length / required.length) * 100)
+    : 100
+
+  // Full score = required coverage (80 pts) + helpful bonus (20 pts)
+  const reqScore  = required.length > 0 ? (knownRequired.length / required.length) * 80 : 80
+  const helpScore = helpful.length  > 0 ? (knownHelpful.length  / helpful.length)  * 20 : 20
+  const score     = Math.round(reqScore + helpScore)
 
   return {
-    score:        total,
-    knownReq:     knownRequired,
+    score,
+    jaccard,
+    knownReq:  knownRequired,
     missingReq,
     knownHelpful,
-    totalReq:     required.length,
+    totalReq:  required.length,
   }
 }
 
+// Three-zone system: 🟢 Perfect Fit ≥80%, 🟡 Stretch Project 50-79%, 🔴 Too Advanced <50%
 export function fitLabel(score) {
-  if (score === 100) return { label: 'Perfect Match',    color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', dot: 'bg-emerald-500', bar: 'bg-emerald-500' }
-  if (score >= 75)  return { label: 'Great Fit',         color: 'text-teal-600',    bg: 'bg-teal-50 border-teal-200',      dot: 'bg-teal-500',    bar: 'bg-teal-500' }
-  if (score >= 50)  return { label: 'Good Fit',          color: 'text-amber-600',   bg: 'bg-amber-50 border-amber-200',    dot: 'bg-amber-400',   bar: 'bg-amber-400' }
-  if (score >= 25)  return { label: 'Needs Some Learning',color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200',  dot: 'bg-orange-400',  bar: 'bg-orange-400' }
-  return                    { label: 'Challenging',       color: 'text-red-600',     bg: 'bg-red-50 border-red-200',        dot: 'bg-red-400',     bar: 'bg-red-400' }
+  if (score >= 80) return {
+    label:  'Perfect Fit',
+    zone:   'perfect',
+    emoji:  '🟢',
+    color:  'text-emerald-600',
+    bg:     'bg-emerald-50 border-emerald-200',
+    dot:    'bg-emerald-500',
+    bar:    'bg-emerald-500',
+    tagBg:  'bg-emerald-100 text-emerald-700 border-emerald-200',
+  }
+  if (score >= 50) return {
+    label:  'Stretch Project',
+    zone:   'stretch',
+    emoji:  '🟡',
+    color:  'text-amber-600',
+    bg:     'bg-amber-50 border-amber-200',
+    dot:    'bg-amber-400',
+    bar:    'bg-amber-400',
+    tagBg:  'bg-amber-100 text-amber-700 border-amber-200',
+  }
+  return {
+    label:  'Too Advanced',
+    zone:   'advanced',
+    emoji:  '🔴',
+    color:  'text-red-500',
+    bg:     'bg-red-50 border-red-200',
+    dot:    'bg-red-400',
+    bar:    'bg-red-400',
+    tagBg:  'bg-red-100 text-red-600 border-red-200',
+  }
 }

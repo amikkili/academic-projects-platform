@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom'
 import {
   CheckSquare, Square, ChevronRight, Zap, Search,
   Trophy, Star, AlertTriangle, XCircle, RefreshCw,
-  BookOpen, Mic2, Clock, BarChart2, ArrowRight,
+  BookOpen, Mic2, Clock, BarChart2, ArrowRight, MessageCircle, Wrench,
 } from 'lucide-react'
 import { projects, categories, difficultyColors } from '../data/projects'
 import { skillCategories, computeMatch, fitLabel } from '../data/skills'
+import { WHATSAPP } from '../data/projectMeta'
+
+function waLink(title) {
+  const msg = encodeURIComponent(`Hi! I'm interested in the "${title}" project. Can you help me?`)
+  return `https://wa.me/${WHATSAPP}?text=${msg}`
+}
 
 // ── Skill checkbox ────────────────────────────────────────────────────────────
 
@@ -31,26 +37,40 @@ function SkillChip({ skill, checked, onToggle }) {
 // ── Result card ───────────────────────────────────────────────────────────────
 
 function FitCard({ project, matchData, rank }) {
-  const { score, knownReq, missingReq, knownHelpful, totalReq } = matchData
-  const fit      = fitLabel(score)
-  const catLabel = categories.find(c => c.id === project.category)?.label || project.category
-  const diffCol  = difficultyColors[project.difficulty] || 'bg-slate-100 text-slate-700'
-  const isTop    = rank === 1
+  const { score, jaccard, knownReq, missingReq, knownHelpful, totalReq } = matchData
+  const fit       = fitLabel(score)
+  const catLabel  = categories.find(c => c.id === project.category)?.label || project.category
+  const diffCol   = difficultyColors[project.difficulty] || 'bg-slate-100 text-slate-700'
+  const isTop     = rank === 1
+  const isStretch = fit.zone === 'stretch'
+  const isPerfect = fit.zone === 'perfect'
 
   return (
-    <div className={`bg-white rounded-2xl border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5 ${isTop ? 'border-brand-orange shadow-md shadow-amber-100' : 'border-slate-100'}`}>
-      {isTop && (
+    <div className={`bg-white rounded-2xl border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-0.5 ${
+      isTop && isPerfect ? 'border-brand-orange shadow-md shadow-amber-100' :
+      isStretch          ? 'border-amber-300 shadow-sm shadow-amber-50' :
+                           'border-slate-100'
+    }`}>
+      {/* Zone banner */}
+      {isTop && isPerfect ? (
         <div className="bg-gradient-to-r from-brand-orange to-amber-400 px-5 py-2 flex items-center gap-2">
           <Star size={14} className="text-white" fill="white" />
           <span className="text-white text-xs font-bold">Best Match for You</span>
         </div>
-      )}
+      ) : isStretch ? (
+        <div className="bg-gradient-to-r from-amber-400 to-yellow-300 px-5 py-2 flex items-center gap-2">
+          <Zap size={14} className="text-amber-900" fill="currentColor" />
+          <span className="text-amber-900 text-xs font-bold">Sweet Spot — Ideal for Growth</span>
+        </div>
+      ) : null}
+
       <div className="p-5">
         <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap gap-1.5 mb-2">
               <span className={`badge ${diffCol}`}>{project.difficulty}</span>
               <span className="badge bg-slate-100 text-slate-600">{catLabel}</span>
+              <span className={`badge border ${fit.tagBg}`}>{fit.emoji} {fit.label}</span>
             </div>
             <h3 className="font-bold text-[#0B1D3A] leading-snug">{project.title}</h3>
           </div>
@@ -58,19 +78,19 @@ function FitCard({ project, matchData, rank }) {
           {/* Score donut */}
           <div className="flex-shrink-0 text-center">
             <div className={`w-16 h-16 rounded-full border-4 flex items-center justify-center ${
-              score >= 75 ? 'border-emerald-400' : score >= 50 ? 'border-amber-400' : score >= 25 ? 'border-orange-400' : 'border-red-400'
+              isPerfect ? 'border-emerald-400' : isStretch ? 'border-amber-400' : 'border-red-400'
             }`}>
               <span className="font-extrabold text-lg text-[#0B1D3A]">{score}<span className="text-xs font-normal text-slate-400">%</span></span>
             </div>
-            <p className={`text-xs font-semibold mt-1 ${fit.color}`}>{fit.label}</p>
+            <p className={`text-[10px] font-semibold mt-1 text-slate-400`}>Jaccard {jaccard}%</p>
           </div>
         </div>
 
         {/* Match bar */}
         <div className="mb-3">
           <div className="flex justify-between text-xs text-slate-400 mb-1">
-            <span>Skill match</span>
-            <span>{knownReq.length}/{totalReq} required skills</span>
+            <span>Skill coverage</span>
+            <span>{knownReq.length}/{totalReq} required</span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2">
             <div className={`h-full rounded-full ${fit.bar} transition-all duration-700`} style={{ width: `${score}%` }} />
@@ -80,7 +100,7 @@ function FitCard({ project, matchData, rank }) {
         {/* Skills you have */}
         {knownReq.length > 0 && (
           <div className="mb-2">
-            <p className="text-xs font-semibold text-slate-400 mb-1.5">Skills you have ✓</p>
+            <p className="text-xs font-semibold text-slate-400 mb-1.5">Skills you already have</p>
             <div className="flex flex-wrap gap-1.5">
               {knownReq.map(s => (
                 <span key={s} className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-medium border border-emerald-100">{s}</span>
@@ -92,23 +112,39 @@ function FitCard({ project, matchData, rank }) {
           </div>
         )}
 
-        {/* Missing skills */}
-        {missingReq.length > 0 && (
-          <div className="mb-3">
-            <p className="text-xs font-semibold text-slate-400 mb-1.5">You'd need to learn</p>
+        {/* Learning delta — the core Jaccard output */}
+        {missingReq.length > 0 ? (
+          <div className="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
+            <p className="text-xs font-bold text-amber-800 mb-1.5 flex items-center gap-1">
+              <BookOpen size={12} /> You'll learn building this ({missingReq.length} new skill{missingReq.length > 1 ? 's' : ''})
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {missingReq.map(s => (
-                <span key={s} className="px-2 py-0.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium border border-red-100">{s}</span>
+                <span key={s} className="px-2 py-0.5 bg-white text-amber-700 rounded-lg text-xs font-medium border border-amber-200">{s}</span>
               ))}
             </div>
           </div>
-        )}
-
-        {missingReq.length === 0 && (
+        ) : (
           <p className="text-emerald-600 text-xs font-semibold mb-3">🎉 You have all required skills — ready to start!</p>
         )}
 
-        {/* Footer */}
+        {/* CTAs */}
+        <div className="flex gap-2 mb-3">
+          <a
+            href={waLink(project.title)}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-1.5 flex-1 py-2.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold rounded-xl text-xs transition-all shadow-sm"
+          >
+            <MessageCircle size={13} fill="white" /> Get This Project
+          </a>
+          <Link
+            to={`/projects/${project.id}?tab=setup`}
+            className="flex items-center justify-center gap-1.5 flex-1 py-2.5 bg-brand-navy hover:bg-brand-blue active:scale-95 text-white font-bold rounded-xl text-xs transition-all"
+          >
+            <Wrench size={13} /> Build It Myself
+          </Link>
+        </div>
         <div className="flex items-center justify-between pt-3 border-t border-slate-100">
           <div className="flex items-center gap-1 text-slate-400 text-xs">
             <Clock size={12} />
@@ -116,9 +152,9 @@ function FitCard({ project, matchData, rank }) {
           </div>
           <Link
             to={`/projects/${project.id}`}
-            className="flex items-center gap-1 text-brand-navy text-sm font-semibold hover:text-brand-orange transition-colors"
+            className="flex items-center gap-1 text-slate-400 text-xs font-medium hover:text-brand-navy transition-colors"
           >
-            View Project <ChevronRight size={15} />
+            Full Details <ChevronRight size={13} />
           </Link>
         </div>
       </div>
@@ -164,14 +200,16 @@ export default function ProjectFit() {
   }, [selected])
 
   const filteredResults = useMemo(() => {
-    if (filterFit === 'all') return rankedResults
-    if (filterFit === 'ready') return rankedResults.filter(r => r.match.missingReq.length === 0)
-    if (filterFit === 'close') return rankedResults.filter(r => r.match.score >= 50 && r.match.missingReq.length > 0)
+    if (filterFit === 'perfect')  return rankedResults.filter(r => r.match.score >= 80)
+    if (filterFit === 'stretch')  return rankedResults.filter(r => r.match.score >= 50 && r.match.score < 80)
+    if (filterFit === 'advanced') return rankedResults.filter(r => r.match.score < 50)
     return rankedResults
   }, [rankedResults, filterFit])
 
-  const topScore   = rankedResults[0]?.match.score ?? 0
-  const readyCount = rankedResults.filter(r => r.match.missingReq.length === 0).length
+  const topScore      = rankedResults[0]?.match.score ?? 0
+  const perfectCount  = rankedResults.filter(r => r.match.score >= 80).length
+  const stretchCount  = rankedResults.filter(r => r.match.score >= 50 && r.match.score < 80).length
+  const advancedCount = rankedResults.filter(r => r.match.score < 50).length
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -262,37 +300,61 @@ export default function ProjectFit() {
         {/* ── Results ── */}
         {showResults && (
           <div>
-            {/* Summary strip */}
-            <div className="bg-gradient-to-r from-brand-navy to-brand-blue rounded-2xl p-6 text-white mb-6 flex flex-wrap gap-6 items-center">
-              <div>
-                <p className="text-white/60 text-sm">Best match</p>
-                <p className="text-3xl font-extrabold">{topScore}%</p>
+            {/* Summary strip — 3-zone breakdown */}
+            <div className="bg-gradient-to-r from-brand-navy to-brand-blue rounded-2xl p-6 text-white mb-6">
+              <div className="flex flex-wrap gap-6 items-center mb-4">
+                <div>
+                  <p className="text-white/60 text-sm">Best match</p>
+                  <p className="text-3xl font-extrabold">{topScore}%</p>
+                </div>
+                <div className="w-px h-10 bg-white/20 hidden sm:block" />
+                <div>
+                  <p className="text-white/60 text-sm">Skills selected</p>
+                  <p className="text-3xl font-extrabold">{selected.size}</p>
+                </div>
+                <div className="sm:ml-auto text-right">
+                  <p className="text-white/70 text-sm max-w-xs leading-relaxed">
+                    {stretchCount > 0
+                      ? `${stretchCount} Stretch Project${stretchCount > 1 ? 's' : ''} are your sweet spot — you'll grow fast building them.`
+                      : perfectCount > 0
+                        ? `${perfectCount} project${perfectCount > 1 ? 's' : ''} are a perfect fit — start building right now.`
+                        : 'Add more skills to unlock better matches.'}
+                  </p>
+                </div>
               </div>
-              <div className="w-px h-10 bg-white/20 hidden sm:block" />
-              <div>
-                <p className="text-white/60 text-sm">Ready to start now</p>
-                <p className="text-3xl font-extrabold">{readyCount}</p>
-              </div>
-              <div className="w-px h-10 bg-white/20 hidden sm:block" />
-              <div>
-                <p className="text-white/60 text-sm">Skills selected</p>
-                <p className="text-3xl font-extrabold">{selected.size}</p>
-              </div>
-              <div className="sm:ml-auto">
-                <p className="text-white/70 text-sm max-w-xs leading-relaxed">
-                  {readyCount > 0
-                    ? `You can start ${readyCount} project${readyCount > 1 ? 's' : ''} with your current skills right now.`
-                    : 'Add more skills or pick a project to learn as you build.'}
-                </p>
+              {/* Zone pills */}
+              <div className="flex flex-wrap gap-3">
+                <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2">
+                  <span className="text-base">🟢</span>
+                  <div>
+                    <p className="text-white text-sm font-bold leading-none">{perfectCount}</p>
+                    <p className="text-white/50 text-xs">Perfect Fit</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/30 rounded-xl px-4 py-2">
+                  <span className="text-base">🟡</span>
+                  <div>
+                    <p className="text-white text-sm font-bold leading-none">{stretchCount}</p>
+                    <p className="text-amber-200 text-xs">Stretch Projects ✦ Sweet Spot</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2">
+                  <span className="text-base">🔴</span>
+                  <div>
+                    <p className="text-white text-sm font-bold leading-none">{advancedCount}</p>
+                    <p className="text-white/50 text-xs">Too Advanced</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Filter tabs */}
             <div className="flex gap-2 mb-5 flex-wrap">
               {[
-                { id: 'all',   label: `All (${rankedResults.length})` },
-                { id: 'ready', label: `Ready to Start (${readyCount})` },
-                { id: 'close', label: 'Close Matches' },
+                { id: 'all',      label: `All (${rankedResults.length})` },
+                { id: 'perfect',  label: `🟢 Perfect Fit (${perfectCount})` },
+                { id: 'stretch',  label: `🟡 Stretch Zone (${stretchCount})` },
+                { id: 'advanced', label: `🔴 Too Advanced (${advancedCount})` },
               ].map(f => (
                 <button
                   key={f.id}
@@ -344,20 +406,39 @@ export default function ProjectFit() {
 
         {/* ── Empty state (before selecting skills) ── */}
         {!showResults && selected.size === 0 && (
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[
-              { icon: CheckSquare, title: 'Select Your Skills', desc: 'Check every technology you know from the list above — languages, frameworks, tools.' },
-              { icon: BarChart2,   title: 'See Match Scores',  desc: 'Each project gets a match % based on your skills. Missing skills are listed clearly.' },
-              { icon: Trophy,      title: 'Pick & Start',       desc: 'Start from your best-match project, or stretch yourself with a challenging one.' },
-            ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white rounded-2xl border border-slate-100 p-6 text-center">
-                <div className="w-12 h-12 rounded-xl bg-brand-navy/10 flex items-center justify-center mx-auto mb-3">
-                  <Icon size={22} className="text-brand-navy" />
+          <div className="space-y-4">
+            <div className="grid sm:grid-cols-3 gap-4">
+              {[
+                { icon: CheckSquare, title: 'Select Your Skills', desc: 'Check every technology you know — languages, frameworks, tools, databases.' },
+                { icon: BarChart2,   title: 'Jaccard Similarity Score', desc: 'Each project is ranked by how much of its required skill set you already cover.' },
+                { icon: Trophy,      title: 'Find Your Sweet Spot',     desc: 'Aim for 🟡 Stretch Projects (50-80%) — you grow fastest building projects that challenge you just enough.' },
+              ].map(({ icon: Icon, title, desc }) => (
+                <div key={title} className="bg-white rounded-2xl border border-slate-100 p-6 text-center">
+                  <div className="w-12 h-12 rounded-xl bg-brand-navy/10 flex items-center justify-center mx-auto mb-3">
+                    <Icon size={22} className="text-brand-navy" />
+                  </div>
+                  <p className="font-bold text-[#0B1D3A] mb-1">{title}</p>
+                  <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
                 </div>
-                <p className="font-bold text-[#0B1D3A] mb-1">{title}</p>
-                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+              ))}
+            </div>
+            {/* Zone legend */}
+            <div className="bg-white rounded-2xl border border-slate-100 p-5">
+              <p className="text-sm font-bold text-slate-600 mb-3">How projects are scored</p>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {[
+                  { emoji: '🟢', zone: 'Perfect Fit', range: '≥ 80%', desc: 'You know most or all required skills. Ready to build right now.', cls: 'bg-emerald-50 border-emerald-200' },
+                  { emoji: '🟡', zone: 'Stretch Project', range: '50–79%', desc: 'Sweet spot. You\'ll learn new skills while applying what you know — fastest growth zone.', cls: 'bg-amber-50 border-amber-200' },
+                  { emoji: '🔴', zone: 'Too Advanced', range: '< 50%', desc: 'You\'d need to learn more than half the stack. Worth bookmarking for later.', cls: 'bg-red-50 border-red-100' },
+                ].map(z => (
+                  <div key={z.zone} className={`rounded-xl border p-4 ${z.cls}`}>
+                    <p className="text-lg mb-1">{z.emoji}</p>
+                    <p className="font-bold text-[#0B1D3A] text-sm">{z.zone} <span className="font-normal text-slate-400">{z.range}</span></p>
+                    <p className="text-slate-500 text-xs mt-1 leading-relaxed">{z.desc}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         )}
       </div>

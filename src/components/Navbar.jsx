@@ -38,7 +38,7 @@ export default function Navbar() {
         ? 'bg-[#0B1D3A]/98 backdrop-blur-xl shadow-2xl shadow-black/40 border-b border-white/8'
         : 'bg-[#0B1D3A]/90 backdrop-blur-lg border-b border-white/5'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-5 lg:px-10">
         <div className="flex items-center h-[60px] gap-4">
 
           {/* ── Logo ── */}

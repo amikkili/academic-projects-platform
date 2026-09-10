@@ -1,8 +1,14 @@
 import { Link } from 'react-router-dom'
-import { Clock, ChevronRight, Code, Zap } from 'lucide-react'
+import { Clock, ChevronRight, MessageCircle, Wrench } from 'lucide-react'
 import { categories, difficultyColors } from '../data/projects'
+import { WHATSAPP } from '../data/projectMeta'
 
 const categoryColorMap = Object.fromEntries(categories.map(c => [c.id, c.color]))
+
+function waLink(title) {
+  const msg = encodeURIComponent(`Hi! I'm interested in the "${title}" project. Can you help me?`)
+  return `https://wa.me/${WHATSAPP}?text=${msg}`
+}
 
 export default function ProjectCard({ project }) {
   const { id, title, category, difficulty, duration, tech, summary } = project
@@ -35,10 +41,7 @@ export default function ProjectCard({ project }) {
         {/* Tech stack */}
         <div className="flex flex-wrap gap-1.5 mb-5">
           {tech.slice(0, 4).map(t => (
-            <span
-              key={t}
-              className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium"
-            >
+            <span key={t} className="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-medium">
               {t}
             </span>
           ))}
@@ -49,17 +52,37 @@ export default function ProjectCard({ project }) {
           )}
         </div>
 
+        {/* CTAs */}
+        <div className="flex gap-2 mb-3">
+          <a
+            href={waLink(title)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={e => e.stopPropagation()}
+            className="flex items-center justify-center gap-1.5 flex-1 py-2.5 bg-green-500 hover:bg-green-600 active:scale-95 text-white font-bold rounded-xl text-xs transition-all shadow-sm shadow-green-200"
+          >
+            <MessageCircle size={13} fill="white" /> Get This Project
+          </a>
+          <Link
+            to={`/projects/${id}?tab=setup`}
+            onClick={e => e.stopPropagation()}
+            className="flex items-center justify-center gap-1.5 flex-1 py-2.5 bg-brand-navy hover:bg-brand-blue active:scale-95 text-white font-bold rounded-xl text-xs transition-all"
+          >
+            <Wrench size={13} /> Build It Myself
+          </Link>
+        </div>
+
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
           <div className="flex items-center gap-1.5 text-slate-400 text-xs">
             <Clock size={13} />
             <span>{duration}</span>
           </div>
           <Link
             to={`/projects/${id}`}
-            className="flex items-center gap-1 text-brand-navy font-semibold text-sm hover:text-brand-orange transition-colors"
+            className="flex items-center gap-1 text-slate-400 font-medium text-xs hover:text-brand-navy transition-colors"
           >
-            View Project <ChevronRight size={15} />
+            Full Details <ChevronRight size={13} />
           </Link>
         </div>
       </div>
