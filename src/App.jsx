@@ -8,7 +8,12 @@ import VivaMockTest from './pages/VivaMockTest'
 import ProjectFit from './pages/ProjectFit'
 import InternalMarksEstimator from './pages/InternalMarksEstimator'
 import InterviewReadiness from './pages/InterviewReadiness'
+import HRPrep from './pages/HRPrep'
+import ProjectInterview from './pages/ProjectInterview'
+import ResumeBuilder from './pages/ResumeBuilder'
+import CodingPractice from './pages/CodingPractice'
 import About from './pages/About'
+import Login from './pages/Login'
 
 export default function App() {
   return (
@@ -19,11 +24,16 @@ export default function App() {
           <Route path="/"                        element={<Home />} />
           <Route path="/projects"                element={<Projects />} />
           <Route path="/projects/:id"            element={<ProjectDetail />} />
-          <Route path="/projects/:id/viva-test"  element={<VivaMockTest />} />
+          <Route path="/projects/:id/viva-test"      element={<VivaMockTest />} />
+          <Route path="/projects/:id/interview-prep" element={<ProjectInterview />} />
           <Route path="/project-fit"             element={<ProjectFit />} />
           <Route path="/internal-marks"          element={<InternalMarksEstimator />} />
           <Route path="/interview-readiness"     element={<InterviewReadiness />} />
+          <Route path="/hr-prep"                 element={<HRPrep />} />
+          <Route path="/resume-builder"          element={<ResumeBuilder />} />
+          <Route path="/coding-practice"         element={<CodingPractice />} />
           <Route path="/about"                   element={<About />} />
+          <Route path="/login"                   element={<Login />} />
           <Route path="*"                        element={<Projects />} />
         </Routes>
       </main>

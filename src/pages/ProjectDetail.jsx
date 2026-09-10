@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import {
   ArrowLeft, Clock, Code2, BookOpen, Mic2, CheckCircle2,
-  ChevronDown, ChevronUp, Copy, Check, Zap,
+  ChevronDown, ChevronUp, Copy, Check, Zap, Briefcase,
 } from 'lucide-react'
 import { projects, categories, difficultyColors } from '../data/projects'
 import { vivaMCQ } from '../data/vivaMCQ'
@@ -248,19 +248,27 @@ export default function ProjectDetail() {
                 </div>
               </div>
 
-              {/* Mock Test CTA */}
-              {vivaMCQ[id] && (
+              {/* CTA buttons */}
+              <div className="flex flex-wrap gap-2">
                 <Link
-                  to={`/projects/${id}/viva-test`}
-                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-200 hover:shadow-amber-300 hover:scale-105 active:scale-95 transition-all text-sm whitespace-nowrap"
+                  to={`/projects/${id}/interview-prep`}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 active:scale-95 transition-all text-sm whitespace-nowrap shadow-sm"
                 >
-                  <Zap size={16} fill="currentColor" />
-                  Take Mock Test
-                  <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
-                    {vivaMCQ[id].length}Q
-                  </span>
+                  <Briefcase size={14} /> Interview Prep
                 </Link>
-              )}
+                {vivaMCQ[id] && (
+                  <Link
+                    to={`/projects/${id}/viva-test`}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold rounded-xl shadow-lg shadow-amber-200 hover:shadow-amber-300 hover:scale-105 active:scale-95 transition-all text-sm whitespace-nowrap"
+                  >
+                    <Zap size={14} fill="currentColor" />
+                    Mock Test
+                    <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
+                      {vivaMCQ[id].length}Q
+                    </span>
+                  </Link>
+                )}
+              </div>
             </div>
 
             {/* Mock test preview banner */}
