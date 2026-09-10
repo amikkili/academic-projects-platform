@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight, BookOpen, Code2, Mic2, GitBranch,
   Star, Users, Trophy, Zap, ChevronRight, Brain,
-  Globe, Cpu, BarChart2, Smartphone, Shield, Search, Target,
+  Globe, Cpu, BarChart2, Smartphone, Shield, Search, Target, Briefcase,
 } from 'lucide-react'
 import ProjectCard from '../components/ProjectCard'
 import { projects, categories } from '../data/projects'
@@ -168,7 +168,7 @@ export default function Home() {
             <p className="section-sub">Beyond just projects — predict, plan, and prepare smarter for your semester</p>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Project Fit Card */}
             <div className="bg-gradient-to-br from-brand-navy via-[#1B3A6B] to-[#164E63] rounded-3xl p-8 relative overflow-hidden group">
               <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full bg-brand-teal/10 blur-3xl pointer-events-none" />
@@ -208,6 +208,26 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 border border-white/25 text-white font-bold rounded-2xl hover:bg-white/25 active:scale-95 transition-all text-sm backdrop-blur-sm"
               >
                 Estimate My Marks <ArrowRight size={16} />
+              </Link>
+            </div>
+            {/* Interview Readiness Card */}
+            <div className="bg-gradient-to-br from-emerald-800 to-[#064e3b] rounded-3xl p-8 relative overflow-hidden sm:col-span-2 lg:col-span-1">
+              <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
+              <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-5">
+                <Briefcase size={26} className="text-emerald-300" />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-emerald-200 text-xs font-bold mb-3">
+                <Zap size={11} fill="currentColor" /> FEATURE 4
+              </div>
+              <h3 className="text-xl md:text-2xl font-extrabold text-white mb-2">Interview Readiness Score</h3>
+              <p className="text-white/65 text-sm leading-relaxed mb-6">
+                20-question self-assessment across project knowledge, coding, CS fundamentals, communication, and resume — with a personalised action plan.
+              </p>
+              <Link
+                to="/interview-readiness"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/15 border border-white/25 text-white font-bold rounded-2xl hover:bg-white/25 active:scale-95 transition-all text-sm backdrop-blur-sm"
+              >
+                Check My Readiness <ArrowRight size={16} />
               </Link>
             </div>
           </div>
