@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { useParams, Link, Navigate } from 'react-router-dom'
 import {
   ArrowLeft, Clock, Code2, BookOpen, Mic2, CheckCircle2,
-  ChevronDown, ChevronUp, Copy, Check, ExternalLink,
+  ChevronDown, ChevronUp, Copy, Check, Zap,
 } from 'lucide-react'
 import { projects, categories, difficultyColors } from '../data/projects'
+import { vivaMCQ } from '../data/vivaMCQ'
 
 const TABS = [
   { id: 'overview',  label: 'Overview',    icon: BookOpen },
@@ -235,15 +236,50 @@ export default function ProjectDetail() {
         {/* ── Viva Q&A ── */}
         {activeTab === 'viva' && (
           <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center">
-                <Mic2 size={20} className="text-brand-orange" />
+            {/* Header row */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center">
+                  <Mic2 size={20} className="text-brand-orange" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-[#0B1D3A]">Viva Questions & Answers</h2>
+                  <p className="text-slate-500 text-sm">{vivaQA.length} questions — click any to reveal the answer</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-[#0B1D3A]">Viva Questions & Answers</h2>
-                <p className="text-slate-500 text-sm">{vivaQA.length} questions — click any to reveal the answer</p>
-              </div>
+
+              {/* Mock Test CTA */}
+              {vivaMCQ[id] && (
+                <Link
+                  to={`/projects/${id}/viva-test`}
+                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-brand-orange to-amber-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-200 hover:shadow-amber-300 hover:scale-105 active:scale-95 transition-all text-sm whitespace-nowrap"
+                >
+                  <Zap size={16} fill="currentColor" />
+                  Take Mock Test
+                  <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">
+                    {vivaMCQ[id].length}Q
+                  </span>
+                </Link>
+              )}
             </div>
+
+            {/* Mock test preview banner */}
+            {vivaMCQ[id] && (
+              <div className="mb-6 p-5 bg-gradient-to-r from-brand-navy to-brand-blue rounded-2xl text-white flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex-1">
+                  <p className="font-bold text-base mb-1">Ready to test yourself?</p>
+                  <p className="text-white/70 text-sm">
+                    {vivaMCQ[id].length} MCQ questions · 30 sec/question · Concept-wise score · Predicted viva marks out of 10
+                  </p>
+                </div>
+                <Link
+                  to={`/projects/${id}/viva-test`}
+                  className="px-5 py-2.5 bg-brand-orange text-white font-semibold rounded-xl hover:bg-amber-500 transition text-sm whitespace-nowrap flex-shrink-0"
+                >
+                  Start Now →
+                </Link>
+              </div>
+            )}
 
             <div className="space-y-3">
               {vivaQA.map((qa, i) => <VivaItem key={i} qa={qa} index={i} />)}
