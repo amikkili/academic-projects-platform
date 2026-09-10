@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import {
   ArrowRight, BookOpen, Code2, Mic2, GitBranch,
   Star, Users, Trophy, Zap, ChevronRight, Brain,
-  Globe, Cpu, BarChart2, Smartphone, Shield,
+  Globe, Cpu, BarChart2, Smartphone, Shield, Search,
 } from 'lucide-react'
 import ProjectCard from '../components/ProjectCard'
 import { projects, categories } from '../data/projects'
@@ -153,6 +153,40 @@ export default function Home() {
                 </Link>
               )
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Project Fit Recommender Banner ── */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-brand-navy via-[#1B3A6B] to-[#164E63] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8 overflow-hidden relative">
+            {/* Decorative blob */}
+            <div className="absolute -right-10 -top-10 w-64 h-64 rounded-full bg-brand-teal/10 blur-3xl pointer-events-none" />
+            <div className="absolute -left-10 -bottom-10 w-64 h-64 rounded-full bg-brand-orange/10 blur-3xl pointer-events-none" />
+
+            <div className="flex-shrink-0 w-20 h-20 rounded-2xl bg-brand-orange/20 border border-brand-orange/30 flex items-center justify-center">
+              <Search size={36} className="text-brand-orange" />
+            </div>
+
+            <div className="flex-1 relative">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-bold mb-3">
+                <Zap size={11} fill="currentColor" /> NEW
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+                Not sure which project to pick?
+              </h2>
+              <p className="text-white/70 text-base leading-relaxed max-w-xl">
+                Tell us what you already know — Python, React, Arduino, whatever — and we'll rank all projects by how well they match your skill set, with a clear list of what you'd need to learn.
+              </p>
+            </div>
+
+            <Link
+              to="/project-fit"
+              className="flex-shrink-0 flex items-center gap-2 px-7 py-4 bg-brand-orange text-white font-bold rounded-2xl hover:bg-amber-500 active:scale-95 transition-all shadow-lg shadow-black/20 whitespace-nowrap relative"
+            >
+              Find My Project <ArrowRight size={18} />
+            </Link>
           </div>
         </div>
       </section>
