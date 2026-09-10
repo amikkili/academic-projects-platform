@@ -1,11 +1,82 @@
 // Coding & Aptitude Question Bank
 // Structure: { company, topic, difficulty, q, options[4], correct (0-based), explanation }
 
+// category: 'service' | 'product' | 'banking'
+// topicWeights: how many questions to draw per topic (must sum to Q_PER_SESSION = 8)
+// logo: 1-3 chars shown in card header
 export const COMPANIES = [
-  { id: 'tcs',      label: 'TCS',          color: 'from-blue-700 to-blue-900',      badge: 'bg-blue-100 text-blue-700' },
-  { id: 'infosys',  label: 'Infosys',      color: 'from-indigo-700 to-indigo-900',  badge: 'bg-indigo-100 text-indigo-700' },
-  { id: 'wipro',    label: 'Wipro',        color: 'from-slate-600 to-slate-800',    badge: 'bg-slate-100 text-slate-700' },
-  { id: 'product',  label: 'Product Companies', color: 'from-brand-navy to-brand-blue', badge: 'bg-cyan-100 text-cyan-700' },
+  // ── Service-based ─────────────────────────────────────────────────────────
+  {
+    id: 'tcs', label: 'TCS', category: 'service', logo: 'T',
+    gradient: 'from-blue-700 to-blue-900', badge: 'bg-blue-100 text-blue-700',
+    topicWeights: { quant: 3, logical: 3, verbal: 2 },
+  },
+  {
+    id: 'infosys', label: 'Infosys', category: 'service', logo: 'I',
+    gradient: 'from-indigo-600 to-indigo-900', badge: 'bg-indigo-100 text-indigo-700',
+    topicWeights: { quant: 2, logical: 4, verbal: 2 },
+  },
+  {
+    id: 'wipro', label: 'Wipro', category: 'service', logo: 'W',
+    gradient: 'from-violet-600 to-purple-900', badge: 'bg-violet-100 text-violet-700',
+    topicWeights: { quant: 3, logical: 3, ds: 2 },
+  },
+  {
+    id: 'cognizant', label: 'Cognizant', category: 'service', logo: 'C',
+    gradient: 'from-sky-600 to-blue-800', badge: 'bg-sky-100 text-sky-700',
+    topicWeights: { quant: 3, logical: 2, verbal: 2, ds: 1 },
+  },
+  {
+    id: 'accenture', label: 'Accenture', category: 'service', logo: 'AC',
+    gradient: 'from-purple-600 to-purple-900', badge: 'bg-purple-100 text-purple-700',
+    topicWeights: { quant: 2, logical: 3, verbal: 3 },
+  },
+  {
+    id: 'hcl', label: 'HCL', category: 'service', logo: 'H',
+    gradient: 'from-emerald-600 to-green-900', badge: 'bg-emerald-100 text-emerald-700',
+    topicWeights: { quant: 4, logical: 2, ds: 2 },
+  },
+  {
+    id: 'techmahindra', label: 'Tech Mahindra', category: 'service', logo: 'TM',
+    gradient: 'from-teal-600 to-teal-900', badge: 'bg-teal-100 text-teal-700',
+    topicWeights: { quant: 3, logical: 3, verbal: 2 },
+  },
+  {
+    id: 'capgemini', label: 'Capgemini', category: 'service', logo: 'CG',
+    gradient: 'from-blue-500 to-cyan-700', badge: 'bg-cyan-100 text-cyan-700',
+    topicWeights: { quant: 2, logical: 3, verbal: 2, ds: 1 },
+  },
+  // ── Product-based ─────────────────────────────────────────────────────────
+  {
+    id: 'amazon', label: 'Amazon', category: 'product', logo: 'AMZ',
+    gradient: 'from-amber-500 to-orange-700', badge: 'bg-amber-100 text-amber-700',
+    topicWeights: { ds: 3, algo: 3, sql: 1, os: 1 },
+  },
+  {
+    id: 'google', label: 'Google', category: 'product', logo: 'G',
+    gradient: 'from-blue-600 to-indigo-800', badge: 'bg-blue-100 text-blue-700',
+    topicWeights: { algo: 4, ds: 3, os: 1 },
+  },
+  {
+    id: 'microsoft', label: 'Microsoft', category: 'product', logo: 'MS',
+    gradient: 'from-sky-600 to-blue-900', badge: 'bg-sky-100 text-sky-700',
+    topicWeights: { ds: 3, algo: 2, sql: 2, os: 1 },
+  },
+  {
+    id: 'flipkart', label: 'Flipkart', category: 'product', logo: 'FK',
+    gradient: 'from-yellow-500 to-orange-600', badge: 'bg-yellow-100 text-yellow-700',
+    topicWeights: { ds: 2, algo: 2, sql: 2, quant: 2 },
+  },
+  {
+    id: 'paytm', label: 'Paytm', category: 'product', logo: 'P',
+    gradient: 'from-sky-500 to-blue-700', badge: 'bg-sky-100 text-sky-700',
+    topicWeights: { ds: 2, algo: 2, quant: 2, logical: 2 },
+  },
+  {
+    id: 'swiggy', label: 'Swiggy', category: 'product', logo: 'SW',
+    gradient: 'from-orange-500 to-red-700', badge: 'bg-orange-100 text-orange-700',
+    topicWeights: { ds: 2, algo: 2, quant: 2, logical: 2 },
+  },
 ]
 
 export const TOPICS = [

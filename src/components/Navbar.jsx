@@ -37,8 +37,8 @@ export default function Navbar() {
   return (
     <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
       scrolled
-        ? 'bg-[#0B1D3A]/98 backdrop-blur-xl shadow-2xl shadow-black/40 border-b border-white/8'
-        : 'bg-[#0B1D3A]/90 backdrop-blur-lg border-b border-white/5'
+        ? 'bg-[#0B1D3A] shadow-2xl shadow-black/40 border-b border-white/10'
+        : 'bg-[#0B1D3A]/95 backdrop-blur-lg border-b border-white/5'
     }`}>
       <div className="w-full px-5 lg:px-10">
         <div className="flex items-center h-[60px] relative">
@@ -62,10 +62,10 @@ export default function Navbar() {
                 to={l.to}
                 end={l.to === '/'}
                 className={({ isActive }) =>
-                  `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 whitespace-nowrap ${
+                  `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
                     isActive
                       ? 'text-white bg-white/10'
-                      : 'text-white/55 hover:text-white/90 hover:bg-white/7'
+                      : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`
                 }
               >
@@ -105,21 +105,13 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="flex items-center gap-1.5 px-4 py-2 text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-xl text-[13px] font-medium transition-all"
-                >
-                  <LogIn size={13} />
-                  Sign In
-                </Link>
-                <Link
-                  to="/login?mode=register"
-                  className="flex items-center gap-1.5 px-4 py-2 bg-brand-orange hover:bg-amber-500 active:scale-95 text-white text-[13px] font-semibold rounded-xl transition-all shadow-md shadow-orange-900/30 hover:shadow-orange-500/30"
-                >
-                  Get Started
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="flex items-center gap-1.5 px-5 py-2 text-white hover:bg-white/10 border border-white/30 hover:border-white/60 rounded-xl text-[15px] font-semibold transition-all"
+              >
+                <LogIn size={15} />
+                Sign In
+              </Link>
             )}
           </div>
 
@@ -186,20 +178,12 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="flex items-center justify-center gap-2 w-full py-3 border border-white/20 text-white/80 hover:text-white hover:bg-white/10 font-semibold rounded-xl transition text-sm mb-2"
-                >
-                  <LogIn size={15} /> Sign In
-                </Link>
-                <Link
-                  to="/login?mode=register"
-                  className="flex items-center justify-center gap-2 w-full py-3 bg-brand-orange hover:bg-amber-500 text-white font-semibold rounded-xl transition text-sm"
-                >
-                  Get Started
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="flex items-center justify-center gap-2 w-full py-3 border border-white/30 text-white hover:bg-white/10 font-semibold rounded-xl transition text-base"
+              >
+                <LogIn size={15} /> Sign In
+              </Link>
             )}
           </div>
         </div>

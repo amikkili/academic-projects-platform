@@ -59,10 +59,10 @@ export default function Footer() {
   return (
     <footer className="bg-[#0B1D3A] text-white">
       <div className="w-full px-5 lg:px-10 pt-16 pb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
 
           {/* Brand */}
-          <div className="sm:col-span-2 lg:col-span-2">
+          <div className="col-span-2 lg:col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-orange to-amber-500 flex items-center justify-center">
                 <Code2 size={20} className="text-white" strokeWidth={2.5} />

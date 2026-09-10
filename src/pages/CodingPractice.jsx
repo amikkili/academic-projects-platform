@@ -6,6 +6,39 @@ import {
 } from 'lucide-react'
 import { questions, COMPANIES, TOPICS } from '../data/codingQBank'
 
+// ── Category filter config ────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  { id: 'all',     label: 'All Companies' },
+  { id: 'service', label: 'Service-based' },
+  { id: 'product', label: 'Product-based' },
+]
+
+// ── Topic-weighted session builder ────────────────────────────────────────────
+
+function buildSession(companyObj, allQuestions, qPerSession) {
+  const weights = companyObj.topicWeights || { quant: 3, logical: 3, verbal: 2 }
+  const picked = []
+  const usedIds = new Set()
+
+  for (const [topic, count] of Object.entries(weights)) {
+    const pool = allQuestions.filter(q => q.topic === topic && !usedIds.has(q.id))
+    const shuffled = [...pool].sort(() => Math.random() - 0.5)
+    shuffled.slice(0, count).forEach(q => { picked.push(q); usedIds.add(q.id) })
+  }
+
+  // Pad if pool was too small
+  if (picked.length < qPerSession) {
+    const extra = allQuestions
+      .filter(q => !usedIds.has(q.id))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, qPerSession - picked.length)
+    picked.push(...extra)
+  }
+
+  return picked.sort(() => Math.random() - 0.5).slice(0, qPerSession)
+}
+
 // ── localStorage helpers ──────────────────────────────────────────────────────
 
 const LS_KEY = 'academi_weak_topics'
@@ -265,13 +298,11 @@ function WeakTopicTracker() {
 
 const Q_PER_SESSION = 8
 
-function Quiz({ company, topics, onDone }) {
+function Quiz({ company, onDone }) {
   const pool = useMemo(() => {
-    const filtered = questions.filter(q =>
-      q.company === company && (topics.length === 0 || topics.includes(q.topic))
-    )
-    return shuffle(filtered).slice(0, Q_PER_SESSION)
-  }, [company, topics])
+    const companyObj = COMPANIES.find(c => c.id === company)
+    return companyObj ? buildSession(companyObj, questions, Q_PER_SESSION) : []
+  }, [company])
 
   const [current,  setCurrent]  = useState(0)
   const [selected, setSelected] = useState(null)
@@ -385,132 +416,145 @@ function Quiz({ company, topics, onDone }) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function CodingPractice() {
-  const [phase,       setPhase]       = useState('home')   // home | quiz | results
+  const [phase,       setPhase]       = useState('home')
   const [company,     setCompany]     = useState(null)
-  const [topics,      setTopics]      = useState([])       // [] = all
+  const [catFilter,   setCatFilter]   = useState('all')
   const [quizQs,      setQuizQs]      = useState([])
   const [quizAnswers, setQuizAnswers] = useState([])
 
   const companyObj = COMPANIES.find(c => c.id === company)
 
-  const availableTopics = useMemo(() => {
-    if (!company) return []
-    const seen = new Set(questions.filter(q => q.company === company).map(q => q.topic))
-    return TOPICS.filter(t => seen.has(t.id))
-  }, [company])
+  const filteredCompanies = useMemo(() =>
+    catFilter === 'all' ? COMPANIES : COMPANIES.filter(c => c.category === catFilter),
+    [catFilter]
+  )
 
-  const toggleTopic = (tId) => {
-    setTopics(prev => prev.includes(tId) ? prev.filter(t => t !== tId) : [...prev, tId])
-  }
-
-  const startQuiz = () => {
-    setQuizQs([])
-    setQuizAnswers([])
-    setPhase('quiz')
-  }
+  const startQuiz = () => { setQuizQs([]); setQuizAnswers([]); setPhase('quiz') }
 
   const handleDone = useCallback((qs, answers) => {
-    setQuizQs(qs)
-    setQuizAnswers(answers)
-    setPhase('results')
+    setQuizQs(qs); setQuizAnswers(answers); setPhase('results')
   }, [])
 
-  const handleRetry = () => {
-    setPhase('quiz')
-    setQuizQs([])
-    setQuizAnswers([])
-  }
+  const handleRetry = () => { setPhase('quiz'); setQuizQs([]); setQuizAnswers([]) }
 
-  const handleHome = () => {
-    setPhase('home')
-    setCompany(null)
-    setTopics([])
-  }
+  const handleHome = () => { setPhase('home'); setCompany(null) }
 
   // ── Home ──
   if (phase === 'home') {
     return (
       <div className="min-h-screen bg-slate-50">
+        {/* Hero */}
         <div className="hero-bg py-16 pt-28">
           <div className="max-w-3xl mx-auto px-4 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-5">
-              <Zap size={14} fill="currentColor" /> Coding & Aptitude Practice
-            </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
               Practice by Company Pattern
             </h1>
             <p className="text-white/70 text-base sm:text-lg max-w-xl mx-auto">
-              {Q_PER_SESSION}-question sessions tailored to TCS, Infosys, Wipro, and product company question patterns. Track your weak topics over time.
+              {Q_PER_SESSION}-question sessions tailored to each company's actual aptitude style.
+              Pick a company — questions are drawn from the shared topic pool automatically.
             </p>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <WeakTopicTracker />
 
-          <h2 className="text-xl font-extrabold text-[#0B1D3A] mb-4">Select a Company Pattern</h2>
-          <div className="grid sm:grid-cols-2 gap-4 mb-8">
-            {COMPANIES.map(c => {
-              const qCount = questions.filter(q => q.company === c.id).length
+          {/* Category filter tabs */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => { setCatFilter(cat.id); setCompany(null) }}
+                className={`px-5 py-2 rounded-full text-sm font-semibold transition-all border ${
+                  catFilter === cat.id
+                    ? 'bg-[#0B1D3A] text-white border-[#0B1D3A] shadow'
+                    : 'bg-white text-slate-600 border-slate-200 hover:border-[#0B1D3A] hover:text-[#0B1D3A]'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+            <span className="ml-auto text-xs text-slate-400 self-center">
+              {filteredCompanies.length} companies · adding a new one = 1 config line
+            </span>
+          </div>
+
+          {/* Company card grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+            {filteredCompanies.map(c => {
               const selected = company === c.id
+              const topicKeys = Object.keys(c.topicWeights)
               return (
                 <button
                   key={c.id}
-                  onClick={() => { setCompany(c.id === company ? null : c.id); setTopics([]) }}
-                  className={`text-left p-5 rounded-2xl border-2 transition-all ${
+                  onClick={() => setCompany(selected ? null : c.id)}
+                  className={`text-left rounded-2xl border-2 overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${
                     selected
-                      ? 'border-brand-orange bg-brand-orange/5 shadow-md'
-                      : 'border-slate-200 bg-white hover:border-brand-navy'
+                      ? 'border-brand-orange shadow-lg shadow-orange-100'
+                      : 'border-slate-200 bg-white hover:border-slate-300 shadow-sm'
                   }`}
                 >
-                  <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold mb-3 ${c.badge}`}>
-                    {c.label}
+                  {/* Gradient header */}
+                  <div className={`bg-gradient-to-br ${c.gradient} flex items-center justify-center py-5 relative`}>
+                    <span className="text-white font-black text-2xl tracking-tight opacity-90 select-none">{c.logo}</span>
+                    {selected && (
+                      <div className="absolute top-2 right-2">
+                        <CheckCircle2 size={16} className="text-white drop-shadow" />
+                      </div>
+                    )}
                   </div>
-                  <p className="font-bold text-[#0B1D3A] text-base">{c.label} Pattern</p>
-                  <p className="text-slate-400 text-sm mt-1">{qCount} questions · Quant, Logical, Technical</p>
-                  {selected && (
-                    <div className="mt-3 flex items-center gap-1.5 text-brand-orange text-xs font-semibold">
-                      <CheckCircle2 size={13} /> Selected
+                  {/* Card body */}
+                  <div className="p-3">
+                    <p className="font-bold text-[#0B1D3A] text-sm leading-tight mb-1">{c.label}</p>
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-2 ${c.badge}`}>
+                      {CATEGORIES.find(cat => cat.id === c.category)?.label}
+                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      {topicKeys.map(t => {
+                        const topic = TOPICS.find(tp => tp.id === t)
+                        return (
+                          <span key={t} className="text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
+                            {topic?.icon} {t}
+                          </span>
+                        )
+                      })}
                     </div>
-                  )}
+                  </div>
                 </button>
               )
             })}
           </div>
 
-          {/* Topic filter */}
-          {company && availableTopics.length > 0 && (
-            <div className="mb-8">
-              <h3 className="font-bold text-[#0B1D3A] mb-3 text-sm">Filter by Topic <span className="text-slate-400 font-normal">(optional — leave blank for all)</span></h3>
-              <div className="flex flex-wrap gap-2">
-                {availableTopics.map(t => {
-                  const on = topics.includes(t.id)
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => toggleTopic(t.id)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border-2 transition ${
-                        on ? 'border-brand-orange bg-brand-orange/10 text-brand-orange' : 'border-slate-200 text-slate-600 hover:border-brand-navy'
-                      }`}
-                    >
-                      {t.icon} {t.label}
-                    </button>
-                  )
-                })}
+          {/* Selected company info + start */}
+          {company && companyObj && (
+            <div className="bg-white rounded-2xl border border-slate-200 p-5 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${companyObj.gradient} flex items-center justify-center flex-shrink-0`}>
+                <span className="text-white font-black text-base">{companyObj.logo}</span>
               </div>
+              <div className="flex-1">
+                <p className="font-bold text-[#0B1D3A]">{companyObj.label} Pattern</p>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {Object.entries(companyObj.topicWeights).map(([t, n]) => {
+                    const topic = TOPICS.find(tp => tp.id === t)
+                    return (
+                      <span key={t} className="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full">
+                        {topic?.icon} {n} {topic?.label || t}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+              <button
+                onClick={startQuiz}
+                className="flex items-center gap-2 px-6 py-3 bg-brand-orange text-white font-bold rounded-xl hover:bg-amber-500 active:scale-95 transition shadow-md shadow-amber-200 text-sm whitespace-nowrap"
+              >
+                <Zap size={16} fill="currentColor" /> Start {Q_PER_SESSION}-Q Session
+              </button>
             </div>
           )}
 
-          {/* Start button */}
-          <button
-            onClick={startQuiz}
-            disabled={!company}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-brand-orange text-white font-bold rounded-2xl hover:bg-amber-500 active:scale-95 transition shadow-lg shadow-amber-200 text-base disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <Zap size={18} fill="currentColor" /> Start {Q_PER_SESSION}-Question Session
-          </button>
           {!company && (
-            <p className="text-slate-400 text-sm mt-2">Select a company pattern above to begin</p>
+            <p className="text-center text-slate-400 text-sm py-4">Select a company card above to begin</p>
           )}
         </div>
       </div>
@@ -536,7 +580,7 @@ export default function CodingPractice() {
             )}
           </div>
         </div>
-        <Quiz company={company} topics={topics} onDone={handleDone} />
+        <Quiz company={company} onDone={handleDone} />
       </div>
     )
   }

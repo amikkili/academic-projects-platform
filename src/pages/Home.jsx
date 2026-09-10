@@ -63,11 +63,6 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-6 backdrop-blur-sm">
-              <Zap size={14} fill="currentColor" />
-              <span>Hands-on Learning for Engineering Students</span>
-            </div>
-
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-6">
               Build Real Projects.{' '}
               <span className="gradient-text">Ace Your Viva.</span>
