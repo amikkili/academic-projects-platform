@@ -78,24 +78,24 @@ export default function Home() {
               and curated viva Q&amp;A — everything you need to succeed in your final year project.
             </p>
 
-            <div className="flex flex-wrap gap-4">
-              <Link to="/projects" className="btn-primary text-base px-8 py-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <Link to="/projects" className="btn-primary text-base px-8 py-4 justify-center">
                 Explore Projects <ArrowRight size={18} />
               </Link>
-              <Link to="/about" className="btn-secondary text-base px-8 py-4">
+              <Link to="/about" className="btn-secondary text-base px-8 py-4 justify-center">
                 How It Works
               </Link>
             </div>
 
             {/* Mini stats */}
-            <div className="flex flex-wrap gap-8 mt-14">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 sm:gap-8 mt-12">
               {stats.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                    <Icon size={18} className="text-brand-orange" />
+                <div key={label} className="flex items-center gap-3 bg-white/7 sm:bg-transparent backdrop-blur-sm sm:backdrop-blur-none border border-white/10 sm:border-0 rounded-2xl p-3 sm:p-0">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0">
+                    <Icon size={16} className="text-brand-orange" />
                   </div>
                   <div>
-                    <p className="text-white font-bold text-xl leading-none">{value}</p>
+                    <p className="text-white font-bold text-lg sm:text-xl leading-none">{value}</p>
                     <p className="text-white/50 text-xs mt-0.5">{label}</p>
                   </div>
                 </div>

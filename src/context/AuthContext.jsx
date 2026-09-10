@@ -1,60 +1,61 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-
-const API = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { supabase } from '../lib/supabase'
+import { API_BASE as API } from '../lib/api'
 
 const AuthContext = createContext(null)
 
+function formatUser(u) {
+  if (!u) return null
+  const meta = u.user_metadata || {}
+  return {
+    id:    u.id,
+    email: u.email,
+    name:  meta.name || meta.full_name || u.email?.split('@')[0] || 'User',
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('ac_token') || null)
-  const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('ac_user') || 'null') } catch { return null }
-  })
+  const [session,  setSession]  = useState(null)
+  const [user,     setUser]     = useState(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setUser(formatUser(session?.user ?? null))
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      setUser(formatUser(session?.user ?? null))
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const login = useCallback(async (email, password) => {
-    const form = new URLSearchParams({ username: email, password })
-    const res = await fetch(`${API}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: form,
-    })
-    if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.detail || 'Login failed')
-    }
-    const data = await res.json()
-    _persist(data)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) throw new Error(error.message)
     return data
   }, [])
 
   const register = useCallback(async (name, email, password) => {
-    const res = await fetch(`${API}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
     })
-    if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.detail || 'Registration failed')
+    if (error) throw new Error(error.message)
+    if (!data.session) {
+      throw new Error('Check your email to confirm your account, then sign in.')
     }
-    const data = await res.json()
-    _persist(data)
     return data
   }, [])
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('ac_token')
-    localStorage.removeItem('ac_user')
-    setToken(null)
-    setUser(null)
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut()
   }, [])
 
-  function _persist(data) {
-    const u = { id: data.user_id, name: data.name, email: data.email }
-    localStorage.setItem('ac_token', data.access_token)
-    localStorage.setItem('ac_user', JSON.stringify(u))
-    setToken(data.access_token)
-    setUser(u)
-  }
+  const token = session?.access_token ?? null
 
   const authFetch = useCallback(async (url, options = {}) => {
     return fetch(`${API}${url}`, {
@@ -68,7 +69,7 @@ export function AuthProvider({ children }) {
   }, [token])
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout, authFetch, isLoggedIn: !!token }}>
+    <AuthContext.Provider value={{ user, token, session, login, register, logout, authFetch, isLoggedIn: !!session }}>
       {children}
     </AuthContext.Provider>
   )

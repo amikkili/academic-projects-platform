@@ -10,6 +10,7 @@ import {
 import { projects, categories, difficultyColors } from '../data/projects'
 import { vivaMCQ } from '../data/vivaMCQ'
 import { projectMeta, WHATSAPP } from '../data/projectMeta'
+import { API_BASE } from '../lib/api'
 
 const TABS = [
   { id: 'overview', label: 'Overview',    icon: BookOpen },
@@ -155,13 +156,12 @@ export default function ProjectDetail() {
   function handleDownloadPPT() {
     setPptLoading(true)
     setPptError('')
-    const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api'
-    const params  = new URLSearchParams({
+    const params = new URLSearchParams({
       name:   pptName.trim(),
       branch: pptBranch.trim(),
       year:   pptYear.trim(),
     })
-    const url = `${apiBase}/ppt/${id}?${params}`
+    const url = `${API_BASE}/ppt/${id}?${params}`
     fetch(url)
       .then(res => {
         if (!res.ok) throw new Error(`Server error ${res.status}`)
@@ -183,8 +183,7 @@ export default function ProjectDetail() {
     setVivaGenError('')
     setVivaGenResults(null)
     try {
-      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api'
-      const res = await fetch(`${apiBase}/viva/generate`, {
+      const res = await fetch(`${API_BASE}/viva/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

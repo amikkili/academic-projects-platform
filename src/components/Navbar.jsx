@@ -26,6 +26,8 @@ export default function Navbar() {
     { to: '/resume-builder',  label: 'Resume' },
     { to: '/coding-practice', label: 'Coding' },
     { to: '/about',           label: 'About' },
+    { to: '/pricing',         label: 'Pricing' },
+    { to: '/contact',         label: 'Contact Us' },
   ]
 
   const initials = user?.name
@@ -39,7 +41,7 @@ export default function Navbar() {
         : 'bg-[#0B1D3A]/90 backdrop-blur-lg border-b border-white/5'
     }`}>
       <div className="w-full px-5 lg:px-10">
-        <div className="flex items-center h-[60px] gap-4">
+        <div className="flex items-center h-[60px] relative">
 
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
@@ -52,11 +54,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* ── Divider ── */}
-          <div className="hidden md:block w-px h-5 bg-white/10 flex-shrink-0" />
-
-          {/* ── Nav links — scrollable if they overflow ── */}
-          <div className="hidden md:flex items-center gap-0.5 flex-1 overflow-x-auto scrollbar-none">
+          {/* ── Nav links — centered absolutely ── */}
+          <div className="hidden xl:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
             {navLinks.map(l => (
               <NavLink
                 key={l.to}
@@ -82,8 +81,8 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* ── Right section — always pushed to far right ── */}
-          <div className="hidden md:flex items-center gap-2 flex-shrink-0 ml-auto">
+          {/* ── Right section — pushed to far right ── */}
+          <div className="hidden xl:flex items-center gap-2 flex-shrink-0 ml-auto">
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
                 {/* Avatar + name */}
@@ -109,13 +108,13 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="flex items-center gap-1.5 px-4 py-2 text-white/80 hover:text-white text-[13px] font-medium transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 text-white/80 hover:text-white border border-white/20 hover:border-white/40 rounded-xl text-[13px] font-medium transition-all"
                 >
                   <LogIn size={13} />
                   Sign In
                 </Link>
                 <Link
-                  to="/login"
+                  to="/login?mode=register"
                   className="flex items-center gap-1.5 px-4 py-2 bg-brand-orange hover:bg-amber-500 active:scale-95 text-white text-[13px] font-semibold rounded-xl transition-all shadow-md shadow-orange-900/30 hover:shadow-orange-500/30"
                 >
                   Get Started
@@ -124,8 +123,8 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* ── Mobile: auth pill + hamburger ── */}
-          <div className="md:hidden flex items-center gap-2 ml-auto">
+          {/* ── Mobile/tablet: auth pill + hamburger ── */}
+          <div className="xl:hidden flex items-center gap-2 ml-auto">
             {isLoggedIn ? (
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-teal to-cyan-600 flex items-center justify-center text-white text-[10px] font-bold">
                 {initials}
@@ -149,7 +148,7 @@ export default function Navbar() {
 
       {/* ── Mobile drawer ── */}
       {open && (
-        <div className="md:hidden bg-[#0B1D3A] border-t border-white/8 px-4 py-3 space-y-0.5 shadow-2xl">
+        <div className="xl:hidden bg-[#0B1D3A] border-t border-white/8 px-4 py-3 space-y-0.5 shadow-2xl">
           {navLinks.map(l => (
             <NavLink
               key={l.to}
@@ -187,12 +186,20 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                to="/login"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-brand-orange hover:bg-amber-500 text-white font-semibold rounded-xl transition text-sm"
-              >
-                <LogIn size={15} /> Sign In / Create Account
-              </Link>
+              <>
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center gap-2 w-full py-3 border border-white/20 text-white/80 hover:text-white hover:bg-white/10 font-semibold rounded-xl transition text-sm mb-2"
+                >
+                  <LogIn size={15} /> Sign In
+                </Link>
+                <Link
+                  to="/login?mode=register"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-brand-orange hover:bg-amber-500 text-white font-semibold rounded-xl transition text-sm"
+                >
+                  Get Started
+                </Link>
+              </>
             )}
           </div>
         </div>

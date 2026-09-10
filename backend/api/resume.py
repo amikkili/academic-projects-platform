@@ -6,30 +6,23 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..database.db import get_db
-from ..database.models import ResumeEntry, User
+from ..database.models import ResumeEntry
 from ..ml.resume_gen import generate_bullets
-from .auth import get_current_user, SECRET_KEY, ALGORITHM
+from .auth import get_current_user
 
 router = APIRouter(prefix="/resume", tags=["resume"])
 
 
-# ── Optional auth helper ──────────────────────────────────────────────────────
-
-def _optional_user(
-    authorization: Optional[str] = Header(None),
-    db: Session = Depends(get_db),
-) -> Optional[User]:
-    """Return the logged-in User if a valid Bearer token is present, else None."""
+def _optional_user(authorization: Optional[str] = Header(None)):
+    """Return user SimpleNamespace if a valid Bearer token is present, else None."""
     if not authorization or not authorization.startswith("Bearer "):
         return None
     token = authorization[7:]
     try:
-        return get_current_user(token=token, db=db)
+        return get_current_user(token=token)
     except Exception:
         return None
 
-
-# ── Schemas ───────────────────────────────────────────────────────────────────
 
 class GenerateIn(BaseModel):
     skills: list[str]
@@ -65,31 +58,15 @@ class ResumeOut(BaseModel):
         from_attributes = True
 
 
-# ── Routes ────────────────────────────────────────────────────────────────────
-
 @router.post("/generate", response_model=GenerateOut)
-def generate(
-    body: GenerateIn,
-    user: Optional[User] = Depends(_optional_user),
-):
-    """
-    Generate resume bullets.
-    When the user is logged in, their user ID seeds the bullet shuffler so
-    two users with the same skills get different (but reproducible) bullet subsets.
-    Anonymous requests use random shuffling.
-    """
+def generate(body: GenerateIn, user=Depends(_optional_user)):
     seed = user.id if user else None
-    result = generate_bullets(
-        body.skills,
-        body.years_exp,
-        body.max_bullets or 10,
-        user_seed=seed,
-    )
+    result = generate_bullets(body.skills, body.years_exp, body.max_bullets or 10, user_seed=seed)
     return GenerateOut(**result)
 
 
 @router.get("/", response_model=list[ResumeOut])
-def list_resumes(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def list_resumes(db: Session = Depends(get_db), user=Depends(get_current_user)):
     entries = (
         db.query(ResumeEntry)
         .filter(ResumeEntry.user_id == user.id)
@@ -100,11 +77,7 @@ def list_resumes(db: Session = Depends(get_db), user: User = Depends(get_current
 
 
 @router.post("/", response_model=ResumeOut, status_code=201)
-def save_resume(
-    body: SaveResumeIn,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-):
+def save_resume(body: SaveResumeIn, db: Session = Depends(get_db), user=Depends(get_current_user)):
     entry = ResumeEntry(
         user_id=user.id,
         title=body.title,
@@ -122,11 +95,7 @@ def save_resume(
 
 
 @router.get("/{entry_id}", response_model=ResumeOut)
-def get_resume(
-    entry_id: int,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-):
+def get_resume(entry_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     entry = (
         db.query(ResumeEntry)
         .filter(ResumeEntry.id == entry_id, ResumeEntry.user_id == user.id)
@@ -138,11 +107,7 @@ def get_resume(
 
 
 @router.delete("/{entry_id}", status_code=204)
-def delete_resume(
-    entry_id: int,
-    db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
-):
+def delete_resume(entry_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     entry = (
         db.query(ResumeEntry)
         .filter(ResumeEntry.id == entry_id, ResumeEntry.user_id == user.id)

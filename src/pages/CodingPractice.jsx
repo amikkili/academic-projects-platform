@@ -237,7 +237,7 @@ function WeakTopicTracker() {
       </div>
       <div className="grid sm:grid-cols-2 gap-3">
         {entries.map(([tId, { correct, total, sessions, lastDate }]) => {
-          const pct  = total ? Math.round((correct / total) * 100) : 0
+          const pct  = total ? Math.min(100, Math.round((correct / total) * 100)) : 0
           const Icon = pctIcon(pct)
           const label = TOPICS.find(t => t.id === tId)?.label || tId
           return (
@@ -298,7 +298,7 @@ function Quiz({ company, topics, onDone }) {
         byTopic[q.topic].t++
         if ((revealed && selected === q.correct) || answers[i] === q.correct) byTopic[q.topic].c++
       })
-      Object.entries(byTopic).forEach(([t, { c, tt }]) => updateHistory(t, c, tt || 1))
+      Object.entries(byTopic).forEach(([topic, stats]) => updateHistory(topic, stats.c, stats.t || 1))
       onDone(pool, [...answers, revealed ? selected : -1])
     } else {
       setCurrent(next)

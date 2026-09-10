@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { BookOpen, Mail, Lock, User, AlertCircle } from 'lucide-react'
 
 export default function Login() {
   const { login, register } = useAuth()
   const navigate = useNavigate()
-  const [mode, setMode] = useState('login')   // 'login' | 'register'
+  const [searchParams] = useSearchParams()
+  const [mode, setMode] = useState(searchParams.get('mode') === 'register' ? 'register' : 'login')
   const [form, setForm] = useState({ name: '', email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

@@ -6,6 +6,7 @@ import {
   BarChart2, Users, Clock, Award, GraduationCap, Briefcase, Sparkles, AlertCircle,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { API_BASE } from '../lib/api'
 
 // ── URL encoding ──────────────────────────────────────────────────────────────
 
@@ -357,8 +358,7 @@ export default function ResumeBuilder() {
     const yrs = isExp ? parseFloat(project.exp_years) || 0 : 0
     setAiLoading(true); setAiError(''); setAiBullets(null); setAiSummary(null)
     try {
-      const apiBase = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/api'
-      const res = await fetch(`${apiBase}/resume/generate`, {
+      const res = await fetch(`${API_BASE}/resume/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ skills, years_exp: yrs, max_bullets: 10 }),
