@@ -1,139 +1,111 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, SlidersHorizontal, X } from 'lucide-react'
+import { Search, X, Layers } from 'lucide-react'
 import ProjectCard from '../components/ProjectCard'
-import { projects, categories, difficultyColors } from '../data/projects'
-
-const difficulties = ['Beginner', 'Intermediate', 'Advanced']
+import { projects, categories, levels } from '../data/projects'
 
 export default function Projects() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [query,    setQuery]    = useState('')
-  const [activeCat, setActiveCat] = useState(searchParams.get('cat') || 'all')
-  const [activeDiff, setActiveDiff] = useState('all')
+  const [searchParams] = useSearchParams()
+  const [query, setQuery] = useState('')
 
-  useEffect(() => {
-    const cat = searchParams.get('cat')
-    if (cat) setActiveCat(cat)
-  }, [searchParams])
+  const levelId = searchParams.get('level')
+  const catId   = searchParams.get('cat')
 
-  const filtered = projects.filter(p => {
-    const matchCat  = activeCat  === 'all' || p.category   === activeCat
-    const matchDiff = activeDiff === 'all' || p.difficulty  === activeDiff
-    const matchQ    = !query     || p.title.toLowerCase().includes(query.toLowerCase()) ||
-                      p.tech.some(t => t.toLowerCase().includes(query.toLowerCase())) ||
-                      p.summary.toLowerCase().includes(query.toLowerCase())
-    return matchCat && matchDiff && matchQ
-  })
+  const levelMeta = levels.find(l => l.id === levelId)
+  const catMeta   = categories.find(c => c.id === catId)
 
-  const handleCat = (id) => {
-    setActiveCat(id)
-    setSearchParams(id === 'all' ? {} : { cat: id })
-  }
+  const displayProjects = (levelId && catId)
+    ? projects.filter(p => {
+        const matchLevel = p.level    === levelId
+        const matchCat   = p.category === catId
+        const matchQ     = !query ||
+          p.title.toLowerCase().includes(query.toLowerCase()) ||
+          p.tech.some(t => t.toLowerCase().includes(query.toLowerCase())) ||
+          p.summary.toLowerCase().includes(query.toLowerCase())
+        return matchLevel && matchCat && matchQ
+      })
+    : []
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="hero-bg py-20 pt-28">
+      {/* Hero */}
+      <div className="hero-bg pt-28 pb-12">
         <div className="w-full px-5 lg:px-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-xs font-semibold mb-4">
+            <Layers size={12} />
+            {projects.length} Projects · School, UG &amp; PG levels
+          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3">
             Project Library
           </h1>
-          <p className="text-white/70 text-lg mb-8 max-w-xl mx-auto">
-            Browse, filter, and find the perfect project for your course.
+          <p className="text-white/65 text-base max-w-md mx-auto">
+            Use the <strong className="text-white">Projects</strong> menu in the navbar to pick your level and topic.
           </p>
-          {/* Search */}
-          <div className="max-w-xl mx-auto relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search by title, technology..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white text-slate-700 placeholder-slate-400 shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-orange/50 text-sm"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <X size={16} />
-              </button>
-            )}
-          </div>
         </div>
       </div>
 
-      <div className="w-full px-5 lg:px-10 py-10">
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          {/* Category pills */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => handleCat(cat.id)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                  activeCat === cat.id
-                    ? 'bg-brand-navy text-white shadow-md'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:border-brand-navy hover:text-brand-navy'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
+      <div className="w-full px-5 lg:px-10 py-8">
 
-          {/* Difficulty */}
-          <div className="flex items-center gap-2 sm:ml-auto">
-            <SlidersHorizontal size={15} className="text-slate-400" />
-            <div className="flex gap-2">
-              <button
-                onClick={() => setActiveDiff('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                  activeDiff === 'all' ? 'bg-brand-navy text-white' : 'bg-white text-slate-500 border border-slate-200'
-                }`}
-              >All</button>
-              {difficulties.map(d => (
-                <button
-                  key={d}
-                  onClick={() => setActiveDiff(d)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-                    activeDiff === d ? 'bg-brand-navy text-white' : 'bg-white text-slate-500 border border-slate-200 hover:border-brand-navy'
-                  }`}
-                >
-                  {d}
-                </button>
-              ))}
+        {/* Nothing selected — guide */}
+        {(!levelId || !catId) && (
+          <div className="text-center py-12">
+            <div className="text-5xl mb-4">☝️</div>
+            <h2 className="text-xl font-bold text-slate-700 mb-2">Choose a Topic to Begin</h2>
+            <p className="text-slate-400 text-sm max-w-xs mx-auto">
+              Click the <strong>Projects ▼</strong> menu in the top navbar, select your level (School / UG / PG), then pick a topic.
+            </p>
+          </div>
+        )}
+
+        {/* Topic selected — show projects */}
+        {levelId && catId && catMeta && levelMeta && (
+          <>
+            {/* Topic header */}
+            <div className={`bg-gradient-to-r ${catMeta.gradient} rounded-2xl px-6 py-5 mb-6 flex flex-col sm:flex-row sm:items-center gap-4`}>
+              <div className="flex items-center gap-3">
+                <span className="text-4xl">{catMeta.icon}</span>
+                <div>
+                  <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">
+                    {levelMeta.icon} {levelMeta.label} · {levelMeta.desc}
+                  </p>
+                  <h2 className="text-white font-bold text-xl">{catMeta.label} Projects</h2>
+                  <p className="text-white/65 text-sm">{catMeta.desc}</p>
+                </div>
+              </div>
+              {/* Search */}
+              <div className="sm:ml-auto relative w-full sm:w-56">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  className="w-full pl-8 pr-8 py-2 rounded-lg bg-white/15 border border-white/25 text-white placeholder-white/50 text-sm focus:outline-none focus:bg-white/20"
+                />
+                {query && (
+                  <button onClick={() => setQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/50 hover:text-white">
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Results count */}
-        <p className="text-slate-500 text-sm mb-6">
-          Showing <strong className="text-brand-navy">{filtered.length}</strong> project{filtered.length !== 1 ? 's' : ''}
-          {query && <> matching "<em>{query}</em>"</>}
-        </p>
+            <p className="text-slate-500 text-sm mb-5">
+              Showing <strong className="text-brand-navy">{displayProjects.length}</strong> project{displayProjects.length !== 1 ? 's' : ''}
+              {query && <> matching "<em>{query}</em>"</>}
+            </p>
 
-        {/* Grid */}
-        {filtered.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map(p => <ProjectCard key={p.id} project={p} />)}
-          </div>
-        ) : (
-          <div className="text-center py-24">
-            <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search size={32} className="text-slate-300" />
-            </div>
-            <p className="text-slate-500 text-lg font-medium">No projects found</p>
-            <p className="text-slate-400 text-sm mt-1">Try adjusting your filters or search query</p>
-            <button
-              onClick={() => { setQuery(''); setActiveCat('all'); setActiveDiff('all') }}
-              className="mt-4 btn-outline"
-            >
-              Clear Filters
-            </button>
-          </div>
+            {displayProjects.length > 0 ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {displayProjects.map(p => <ProjectCard key={p.id} project={p} />)}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-slate-400 text-sm">No projects match your search.</p>
+                <button onClick={() => setQuery('')} className="mt-2 text-brand-orange text-sm font-semibold hover:underline">Clear search</button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

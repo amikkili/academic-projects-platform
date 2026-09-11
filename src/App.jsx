@@ -33,7 +33,7 @@ export default function App() {
         <Routes>
           <Route path="/"                        element={<Home />} />
           <Route path="/projects"                element={<Projects />} />
-          <Route path="/projects/:id"            element={<ProjectDetail />} />
+<Route path="/projects/:id"            element={<ProjectDetail />} />
           <Route path="/projects/:id/viva-test"      element={<VivaMockTest />} />
           <Route path="/projects/:id/interview-prep" element={<ProjectInterview />} />
           <Route path="/project-fit"             element={<ProjectFit />} />

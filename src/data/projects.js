@@ -1,11 +1,71 @@
+export const levels = [
+  { id: 'all',    label: 'All Levels',  icon: '📚', desc: '' },
+  { id: 'school', label: 'School',      icon: '🏫', desc: 'Class 8–12 · Basic programming & web' },
+  { id: 'ug',     label: 'UG / B.Tech', icon: '🎓', desc: 'Final year · Core CS & engineering projects' },
+  { id: 'pg',     label: 'PG / M.Tech', icon: '🔬', desc: 'Research-grade · Advanced AI & systems' },
+]
+
 export const categories = [
-  { id: 'all',      label: 'All Projects',     color: 'bg-slate-100 text-slate-700' },
-  { id: 'ml',       label: 'Machine Learning', color: 'bg-cyan-100 text-cyan-700' },
-  { id: 'web',      label: 'Web Development',  color: 'bg-blue-100 text-blue-700' },
-  { id: 'iot',      label: 'IoT',              color: 'bg-green-100 text-green-700' },
-  { id: 'data',     label: 'Data Science',     color: 'bg-purple-100 text-purple-700' },
-  { id: 'mobile',   label: 'Mobile Apps',      color: 'bg-orange-100 text-orange-700' },
-  { id: 'security', label: 'Cybersecurity',    color: 'bg-red-100 text-red-700' },
+  {
+    id: 'ml',
+    label: 'Machine Learning',
+    color: 'bg-cyan-100 text-cyan-700',
+    icon: '🤖',
+    gradient: 'from-cyan-500 to-blue-600',
+    desc: 'Neural networks, NLP, computer vision, and predictive models.',
+    longDesc: 'Machine Learning projects teach you to build intelligent systems that learn from data. From sentiment analysis to image recognition, these projects cover supervised learning, deep learning, NLP, and computer vision using Python, TensorFlow, and PyTorch.',
+    tools: ['Python', 'TensorFlow', 'PyTorch', 'scikit-learn', 'NLP'],
+  },
+  {
+    id: 'web',
+    label: 'Web Development',
+    color: 'bg-blue-100 text-blue-700',
+    icon: '🌐',
+    gradient: 'from-blue-500 to-indigo-600',
+    desc: 'Full-stack apps with React, Node.js, Django, and REST APIs.',
+    longDesc: 'Web Development projects teach you to build modern, full-stack applications. From simple HTML/CSS pages to complex React + FastAPI systems, you\'ll learn frontend, backend, databases, authentication, and deployment — the complete web stack.',
+    tools: ['React', 'HTML/CSS/JS', 'Node.js', 'FastAPI', 'SQLite'],
+  },
+  {
+    id: 'data',
+    label: 'Data Science',
+    color: 'bg-purple-100 text-purple-700',
+    icon: '📊',
+    gradient: 'from-purple-500 to-violet-600',
+    desc: 'Data cleaning, visualization, EDA, and statistical modeling.',
+    longDesc: 'Data Science projects teach you to extract insights from raw data. You\'ll master data cleaning with pandas, visualization with matplotlib/seaborn, exploratory data analysis, and statistical modeling — skills critical for any analytics or data engineering role.',
+    tools: ['Python', 'Pandas', 'Matplotlib', 'Seaborn', 'Jupyter'],
+  },
+  {
+    id: 'iot',
+    label: 'IoT & Embedded',
+    color: 'bg-green-100 text-green-700',
+    icon: '🔌',
+    gradient: 'from-green-500 to-emerald-600',
+    desc: 'Raspberry Pi, Arduino, sensors, and real-world automation.',
+    longDesc: 'IoT projects bridge the physical and digital worlds. You\'ll work with microcontrollers (Arduino, Raspberry Pi), sensors, actuators, and cloud connectivity to build smart systems for agriculture, home automation, and environmental monitoring.',
+    tools: ['Raspberry Pi', 'Arduino', 'MQTT', 'Python', 'Sensors'],
+  },
+  {
+    id: 'security',
+    label: 'Cybersecurity',
+    color: 'bg-red-100 text-red-700',
+    icon: '🛡️',
+    gradient: 'from-red-500 to-rose-600',
+    desc: 'Network security, intrusion detection, encryption, and ethical hacking.',
+    longDesc: 'Cybersecurity projects teach you to think like both attacker and defender. Build intrusion detection systems, implement cryptographic algorithms, analyze network traffic, and learn secure coding practices essential for modern software development.',
+    tools: ['Python', 'Scapy', 'Wireshark', 'TensorFlow', 'OpenSSL'],
+  },
+  {
+    id: 'mobile',
+    label: 'Mobile Apps',
+    color: 'bg-orange-100 text-orange-700',
+    icon: '📱',
+    gradient: 'from-orange-500 to-amber-600',
+    desc: 'Cross-platform apps with Flutter, React Native, and Firebase.',
+    longDesc: 'Mobile App projects take your skills to Android and iOS platforms. Using Flutter or React Native, you\'ll build cross-platform apps with real device features — camera, GPS, notifications, offline storage — and connect them to Firebase backends.',
+    tools: ['Flutter', 'React Native', 'Firebase', 'Dart', 'SQLite'],
+  },
 ]
 
 export const difficultyColors = {
@@ -17,6 +77,7 @@ export const difficultyColors = {
 export const projects = [
   {
     id: 'sentiment-analysis',
+    level: 'ug',
     title: 'Sentiment Analysis using LSTM',
     category: 'ml',
     difficulty: 'Intermediate',
@@ -81,6 +142,7 @@ print(f"Test Accuracy: {acc:.4f}")`,
   },
   {
     id: 'student-result-portal',
+    level: 'ug',
     title: 'Student Result Management Portal',
     category: 'web',
     difficulty: 'Beginner',
@@ -160,6 +222,7 @@ module.exports = router;`,
   },
   {
     id: 'smart-irrigation',
+    level: 'ug',
     title: 'Smart Irrigation System using IoT',
     category: 'iot',
     difficulty: 'Intermediate',
@@ -231,6 +294,7 @@ void loop() {
   },
   {
     id: 'house-price-prediction',
+    level: 'ug',
     title: 'House Price Prediction',
     category: 'data',
     difficulty: 'Beginner',
@@ -307,6 +371,7 @@ print(f"\\nBest model: {best}")`,
   },
   {
     id: 'expense-tracker-app',
+    level: 'ug',
     title: 'Personal Expense Tracker App',
     category: 'mobile',
     difficulty: 'Beginner',
@@ -403,6 +468,7 @@ class TransactionProvider with ChangeNotifier {
   },
   {
     id: 'network-intrusion-detection',
+    level: 'ug',
     title: 'Network Intrusion Detection System',
     category: 'security',
     difficulty: 'Advanced',
@@ -474,6 +540,7 @@ print(classification_report(y_test, y_pred, target_names=['Normal', 'Attack']))`
   },
   {
     id: 'face-recognition-attendance',
+    level: 'ug',
     title: 'Face Recognition Attendance System',
     category: 'ml',
     difficulty: 'Advanced',
@@ -570,6 +637,7 @@ cv2.destroyAllWindows()`,
   },
   {
     id: 'library-management',
+    level: 'ug',
     title: 'Library Management System',
     category: 'web',
     difficulty: 'Beginner',
@@ -652,6 +720,1023 @@ public class BookIssuanceService {
       { q: 'What is the @Transactional annotation and why is it important?', a: '@Transactional wraps a method in a database transaction. If any exception occurs, all changes are rolled back atomically, ensuring data consistency (e.g., book copies don\'t get decremented without an issuance record being created).' },
       { q: 'Explain the N+1 query problem in ORM.', a: 'When loading a list of N entities and lazily fetching a related entity for each, it produces 1 query for the list + N queries for the related entities. Fix with JOIN FETCH or @EntityGraph to load associations in one query.' },
       { q: 'What is the difference between @OneToMany and @ManyToOne?', a: '@OneToMany defines the "one" side of a one-to-many relationship (e.g., one Member has many Issuances). @ManyToOne is placed on the "many" side (each Issuance has one Member). The foreign key lives on the @ManyToOne side.' },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // SCHOOL PROJECTS (Class 8–12)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'simple-calculator',
+    level: 'school',
+    title: 'Simple Calculator (Python)',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1 week',
+    tech: ['Python', 'Tkinter'],
+    summary: 'Build a fully functional GUI calculator with addition, subtraction, multiplication, and division using Python Tkinter.',
+    description: `This is a great first project for beginners. You will build a graphical calculator using Python's built-in Tkinter library — no extra installations needed.
+
+The project teaches you how to design a grid-based GUI layout, handle button click events, evaluate arithmetic expressions safely, and manage basic error handling (e.g., division by zero).`,
+    steps: [
+      'Install Python and understand the Tkinter module',
+      'Design the calculator layout with buttons in a grid',
+      'Link each button to an event handler function',
+      'Parse and evaluate the expression on "=" click',
+      'Handle errors like division by zero gracefully',
+    ],
+    sourceCode: `import tkinter as tk
+
+class Calculator:
+    def __init__(self, root):
+        self.expression = ""
+        self.display_var = tk.StringVar(value="0")
+
+        display = tk.Entry(root, textvariable=self.display_var,
+                           font=("Arial", 24), justify="right",
+                           bd=10, relief="sunken", bg="#222", fg="white")
+        display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=5, pady=5)
+
+        buttons = [
+            ("7","8","9","/"),
+            ("4","5","6","*"),
+            ("1","2","3","-"),
+            ("C","0","=","+"),
+        ]
+        for r, row in enumerate(buttons, 1):
+            for c, label in enumerate(row):
+                tk.Button(root, text=label, font=("Arial", 18),
+                          command=lambda l=label: self.click(l),
+                          bg="#333", fg="white", activebackground="#555",
+                          relief="raised", bd=3
+                ).grid(row=r, column=c, sticky="nsew", padx=2, pady=2)
+
+        for i in range(5):
+            root.rowconfigure(i, weight=1)
+        for i in range(4):
+            root.columnconfigure(i, weight=1)
+
+    def click(self, label):
+        if label == "C":
+            self.expression = ""
+            self.display_var.set("0")
+        elif label == "=":
+            try:
+                result = eval(self.expression)
+                self.display_var.set(result)
+                self.expression = str(result)
+            except ZeroDivisionError:
+                self.display_var.set("Error")
+                self.expression = ""
+        else:
+            self.expression += label
+            self.display_var.set(self.expression)
+
+root = tk.Tk()
+root.title("Calculator")
+root.geometry("320x420")
+root.configure(bg="#111")
+Calculator(root)
+root.mainloop()`,
+    vivaQA: [
+      { q: 'What is Tkinter?', a: 'Tkinter is Python\'s standard GUI (Graphical User Interface) library. It comes bundled with Python and provides tools to build windows, buttons, labels, and other UI elements without any extra installation.' },
+      { q: 'Why do we use eval() and what is the risk?', a: 'eval() parses and executes a Python expression from a string, making it easy to compute arithmetic. The risk is code injection — if user input is not sanitized, malicious expressions could execute harmful code. For a personal calculator it is acceptable; in production use a safe parser.' },
+      { q: 'What is the grid layout manager in Tkinter?', a: 'Grid is a geometry manager that places widgets in rows and columns like a table. It gives precise control over widget placement, making it ideal for calculator-style layouts.' },
+      { q: 'What is an event-driven program?', a: 'An event-driven program waits for user events (clicks, key presses) and executes the corresponding callback function. GUIs are inherently event-driven — the mainloop() method keeps the window open and listens for events.' },
+      { q: 'How would you extend this project?', a: 'Add keyboard input support, scientific functions (sin, cos, sqrt), a calculation history panel, or convert it to a web app using Flask + JavaScript.' },
+    ],
+  },
+
+  {
+    id: 'student-grade-calculator',
+    level: 'school',
+    title: 'Student Grade Calculator',
+    category: 'data',
+    difficulty: 'Beginner',
+    duration: '1 week',
+    tech: ['Python'],
+    summary: 'A Python program that takes marks in multiple subjects, calculates total, average, percentage, and assigns a grade automatically.',
+    description: `This project is perfect for absolute beginners. You will write a Python program that accepts student marks across multiple subjects, computes the total, average, and percentage, and assigns a letter grade (A, B, C, D, F) based on predefined rules.
+
+You will practice taking user input, performing arithmetic, using conditional statements, and formatting output — the four pillars of any programming beginner.`,
+    steps: [
+      'Accept number of subjects and subject names as input',
+      'Take marks for each subject from the user',
+      'Calculate total, average, and percentage',
+      'Implement grade logic using if-elif-else',
+      'Display a formatted result report',
+    ],
+    sourceCode: `def get_grade(pct):
+    if pct >= 90: return 'A+'
+    elif pct >= 80: return 'A'
+    elif pct >= 70: return 'B'
+    elif pct >= 60: return 'C'
+    elif pct >= 50: return 'D'
+    else: return 'F'
+
+def calculate_result():
+    print("=== Student Grade Calculator ===")
+    name = input("Enter student name: ")
+    n = int(input("Number of subjects: "))
+
+    marks = []
+    subjects = []
+    for i in range(n):
+        sub = input(f"Subject {i+1} name: ")
+        mark = float(input(f"Marks for {sub} (out of 100): "))
+        subjects.append(sub)
+        marks.append(mark)
+
+    total = sum(marks)
+    average = total / n
+    percentage = (total / (n * 100)) * 100
+    grade = get_grade(percentage)
+
+    print("\\n" + "="*40)
+    print(f"  Result Card — {name}")
+    print("="*40)
+    for sub, mark in zip(subjects, marks):
+        print(f"  {sub:<20} {mark:>6.1f}")
+    print("-"*40)
+    print(f"  Total        : {total:.1f} / {n*100}")
+    print(f"  Average      : {average:.2f}")
+    print(f"  Percentage   : {percentage:.2f}%")
+    print(f"  Grade        : {grade}")
+    print("="*40)
+
+calculate_result()`,
+    vivaQA: [
+      { q: 'What is the difference between int() and float() in Python?', a: 'int() converts a value to an integer (whole number, e.g., 5), while float() converts to a decimal number (e.g., 5.0). For marks, we use float() to allow decimal scores.' },
+      { q: 'What is the purpose of if-elif-else?', a: 'It creates a chain of mutually exclusive conditions. Python checks each condition top to bottom and executes the first block whose condition is True, skipping all others.' },
+      { q: 'What is the difference between / and // in Python?', a: '/ performs true division and always returns a float (e.g., 7/2 = 3.5). // performs floor division and returns an integer (e.g., 7//2 = 3).' },
+      { q: 'How would you store the results to a file?', a: 'Use Python\'s open() function with mode "w" to write the result to a .txt file: open("result.txt", "w").write(output_string).' },
+      { q: 'What is a function and why should we use them?', a: 'A function is a reusable block of code that performs a specific task. Functions improve readability, avoid repetition (DRY principle), and make large programs easier to manage.' },
+    ],
+  },
+
+  {
+    id: 'todo-list-app',
+    level: 'school',
+    title: 'To-Do List Web App',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1 week',
+    tech: ['HTML', 'CSS', 'JavaScript'],
+    summary: 'A browser-based To-Do list where you can add, complete, and delete tasks — built with pure HTML, CSS, and JavaScript.',
+    description: `This project introduces you to the three building blocks of the web: HTML for structure, CSS for styling, and JavaScript for interactivity. No frameworks, no server — just a single HTML file that runs in any browser.
+
+You will learn how to manipulate the DOM (Document Object Model), handle events, use localStorage to persist tasks across page reloads, and style a clean modern UI.`,
+    steps: [
+      'Create the HTML structure (input box + task list)',
+      'Style the page with CSS (dark theme, rounded cards)',
+      'Write JavaScript to add tasks on button click or Enter key',
+      'Add "complete" toggle and "delete" functionality',
+      'Persist tasks using localStorage',
+    ],
+    sourceCode: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>To-Do List</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; justify-content: center; padding: 40px 16px; }
+    .container { width: 100%; max-width: 480px; }
+    h1 { font-size: 2rem; margin-bottom: 24px; color: #e94560; text-align: center; }
+    .input-row { display: flex; gap: 8px; margin-bottom: 20px; }
+    input { flex: 1; padding: 12px 16px; border-radius: 8px; border: none; background: #16213e; color: #eee; font-size: 15px; outline: 2px solid transparent; }
+    input:focus { outline-color: #e94560; }
+    button.add { padding: 12px 20px; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .task { display: flex; align-items: center; gap: 10px; background: #16213e; border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+    .task span { flex: 1; font-size: 15px; }
+    .task.done span { text-decoration: line-through; color: #666; }
+    .task button { background: none; border: none; cursor: pointer; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 My Tasks</h1>
+    <div class="input-row">
+      <input id="taskInput" placeholder="Add a new task..." />
+      <button class="add" onclick="addTask()">Add</button>
+    </div>
+    <div id="taskList"></div>
+  </div>
+  <script>
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+    function save() { localStorage.setItem('tasks', JSON.stringify(tasks)); }
+
+    function render() {
+      const list = document.getElementById('taskList');
+      list.innerHTML = tasks.map((t, i) => \`
+        <div class="task \${t.done ? 'done' : ''}">
+          <span onclick="toggle(\${i})" style="cursor:pointer">\${t.text}</span>
+          <button onclick="toggle(\${i})">\${t.done ? '↩' : '✓'}</button>
+          <button onclick="remove(\${i})">🗑</button>
+        </div>\`).join('');
+    }
+
+    function addTask() {
+      const input = document.getElementById('taskInput');
+      const text = input.value.trim();
+      if (!text) return;
+      tasks.push({ text, done: false });
+      input.value = '';
+      save(); render();
+    }
+
+    function toggle(i) { tasks[i].done = !tasks[i].done; save(); render(); }
+    function remove(i) { tasks.splice(i, 1); save(); render(); }
+
+    document.getElementById('taskInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    render();
+  </script>
+</body>
+</html>`,
+    vivaQA: [
+      { q: 'What is the DOM?', a: 'DOM (Document Object Model) is a programming interface for HTML documents. It represents the page as a tree of objects that JavaScript can read and modify dynamically without reloading the page.' },
+      { q: 'What is localStorage and how is it different from sessionStorage?', a: 'localStorage persists data in the browser indefinitely until explicitly cleared. sessionStorage only lasts for the current browser tab/session and is cleared when the tab is closed.' },
+      { q: 'What is JSON.parse() and JSON.stringify()?', a: 'JSON.stringify() converts a JavaScript object to a JSON string (for storage). JSON.parse() converts a JSON string back to a JavaScript object (for use). We need both because localStorage only stores strings.' },
+      { q: 'What is an event listener?', a: 'An event listener is a function that waits for a specific event (like a click or keypress) on a DOM element and executes when it occurs. It separates logic from HTML (better than inline onclick).' },
+      { q: 'How would you improve this project?', a: 'Add task categories, due dates, drag-to-reorder, a progress bar showing completion %, or convert it to a PWA so it works offline on mobile.' },
+    ],
+  },
+
+  {
+    id: 'number-guessing-game',
+    level: 'school',
+    title: 'Number Guessing Game',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1 week',
+    tech: ['Python', 'HTML', 'CSS', 'JavaScript'],
+    summary: 'The computer picks a random number and the player guesses it with hints. Build it in both Python (console) and as a browser game.',
+    description: `A classic beginner game that teaches random number generation, loops, conditionals, and user interaction. You build it first as a Python console app, then as an interactive browser game with a modern UI.
+
+The browser version adds visual feedback (hot/cold hints), a guess counter, high score tracking via localStorage, and a colorful animated interface.`,
+    steps: [
+      'Build the Python console version with while loop and hints',
+      'Design the HTML/CSS game interface',
+      'Add JavaScript random number generation',
+      'Implement hint system (Too High / Too Low / Correct)',
+      'Track number of attempts and store high score',
+    ],
+    sourceCode: `# Python console version
+import random
+
+def play():
+    secret = random.randint(1, 100)
+    attempts = 0
+    print("🎯 Guess the number between 1 and 100!")
+
+    while True:
+        try:
+            guess = int(input("Your guess: "))
+        except ValueError:
+            print("Please enter a valid number.")
+            continue
+
+        attempts += 1
+
+        if guess < secret:
+            print(f"📉 Too low! Try higher. (Attempt {attempts})")
+        elif guess > secret:
+            print(f"📈 Too high! Try lower. (Attempt {attempts})")
+        else:
+            print(f"🎉 Correct! The number was {secret}.")
+            print(f"   You got it in {attempts} attempt{'s' if attempts > 1 else ''}!")
+            break
+
+    again = input("Play again? (y/n): ")
+    if again.lower() == 'y':
+        play()
+
+play()`,
+    vivaQA: [
+      { q: 'What does random.randint(1, 100) do?', a: 'It generates a random integer between 1 and 100 inclusive. The random module uses a pseudo-random number generator (Mersenne Twister algorithm) seeded from the system clock.' },
+      { q: 'What is the difference between a while loop and a for loop?', a: 'A for loop iterates over a known sequence or a fixed number of times. A while loop continues as long as a condition is True — used when the number of iterations is unknown (like waiting for a correct guess).' },
+      { q: 'Why do we use try-except around int(input())?', a: 'If the user types text instead of a number, int() raises a ValueError and crashes the program. try-except catches that error and lets us show a friendly message instead of crashing.' },
+      { q: 'What is a pseudo-random number?', a: 'Computers cannot generate truly random numbers — they use deterministic algorithms seeded with an initial value (like system time). The sequence looks random but is reproducible with the same seed, hence "pseudo-random".' },
+      { q: 'How would you make the game harder?', a: 'Reduce the number of allowed guesses, increase the range (1–1000), add a time limit, or implement a multiplayer mode where two players take turns guessing each other\'s numbers.' },
+    ],
+  },
+
+  {
+    id: 'weather-app',
+    level: 'school',
+    title: 'Weather App using OpenWeather API',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1-2 weeks',
+    tech: ['HTML', 'CSS', 'JavaScript', 'REST API'],
+    summary: 'Search any city and display real-time weather — temperature, humidity, wind speed, and condition icon — using the OpenWeatherMap free API.',
+    description: `This project introduces you to working with external APIs — a core skill in modern web development. You will call the OpenWeatherMap API from JavaScript using the Fetch API, parse the JSON response, and display the data in a beautifully styled weather card.
+
+You will learn about API keys, HTTP GET requests, JSON parsing, async/await, and dynamic DOM updates. The OpenWeatherMap free tier supports 1000 API calls/day, more than enough for a project.`,
+    steps: [
+      'Sign up at openweathermap.org and get a free API key',
+      'Build the HTML layout (search bar + weather card)',
+      'Style the card with CSS gradients and icons',
+      'Fetch weather data using fetch() and async/await',
+      'Display city, temperature, condition, and humidity',
+    ],
+    sourceCode: `const API_KEY = 'YOUR_API_KEY_HERE';
+
+async function getWeather() {
+  const city = document.getElementById('cityInput').value.trim();
+  if (!city) return;
+
+  const url = \`https://api.openweathermap.org/data/2.5/weather?q=\${city}&appid=\${API_KEY}&units=metric\`;
+
+  try {
+    document.getElementById('result').innerHTML = '<p>Loading...</p>';
+    const res  = await fetch(url);
+    if (!res.ok) throw new Error('City not found');
+    const data = await res.json();
+
+    const { name, main, weather, wind } = data;
+    document.getElementById('result').innerHTML = \`
+      <div class="card">
+        <h2>\${name}</h2>
+        <img src="https://openweathermap.org/img/wn/\${weather[0].icon}@2x.png" alt="icon" />
+        <p class="temp">\${Math.round(main.temp)}°C</p>
+        <p class="desc">\${weather[0].description}</p>
+        <div class="details">
+          <span>💧 \${main.humidity}%</span>
+          <span>💨 \${wind.speed} m/s</span>
+          <span>🌡️ Feels \${Math.round(main.feels_like)}°C</span>
+        </div>
+      </div>\`;
+  } catch (err) {
+    document.getElementById('result').innerHTML = \`<p class="error">\${err.message}</p>\`;
+  }
+}
+
+document.getElementById('cityInput').addEventListener('keypress', e => {
+  if (e.key === 'Enter') getWeather();
+});`,
+    vivaQA: [
+      { q: 'What is a REST API?', a: 'REST (Representational State Transfer) is an architectural style for web APIs. It uses standard HTTP methods (GET, POST, PUT, DELETE) on URLs (endpoints) that represent resources. The server returns data (usually JSON) — it doesn\'t care what the client is.' },
+      { q: 'What is async/await and why do we use it?', a: 'async/await is syntactic sugar over Promises. Network requests take time; async/await lets us write asynchronous code that reads like synchronous code. The await keyword pauses execution until the Promise resolves, without blocking the browser.' },
+      { q: 'What is JSON?', a: 'JSON (JavaScript Object Notation) is a lightweight data format used to send and receive structured data over the web. It looks like a JavaScript object with keys and values, but as a string. The API returns JSON; we parse it with res.json().' },
+      { q: 'What is an API key and why is it needed?', a: 'An API key is a unique identifier that authenticates your application to the API provider. It lets the provider track usage, rate-limit requests, and prevent unauthorized access. Never expose API keys in public repositories.' },
+      { q: 'How would you add a 5-day forecast?', a: 'Use the OpenWeatherMap /forecast endpoint which returns weather data for every 3 hours over 5 days. Filter by noon timestamps, group by date, and display each day as a forecast card below the current weather.' },
+    ],
+  },
+
+  {
+    id: 'qr-code-generator',
+    level: 'school',
+    title: 'QR Code Generator',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1 week',
+    tech: ['Python', 'qrcode', 'Pillow'],
+    summary: 'Generate QR codes for URLs, text, or contact info using Python. Save them as images or display them in a simple GUI.',
+    description: `QR codes are everywhere — menus, payments, business cards. In this project you will generate them programmatically using Python's qrcode library. You will create QR codes for URLs, plain text, and vCard contacts, and optionally add a logo in the center.
+
+This project teaches you how to install and use third-party Python libraries, work with images using Pillow, and build a simple file-saving workflow.`,
+    steps: [
+      'Install qrcode and Pillow: pip install qrcode[pil]',
+      'Generate a basic QR code for a URL',
+      'Customize colors, box size, and border',
+      'Add a center logo using Pillow image compositing',
+      'Build a Tkinter GUI to let users enter text and generate live',
+    ],
+    sourceCode: `import qrcode
+from PIL import Image
+
+def generate_qr(data, filename="qrcode.png", logo_path=None):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="#1a1a2e", back_color="white").convert("RGB")
+
+    if logo_path:
+        logo = Image.open(logo_path).convert("RGBA")
+        # Resize logo to 25% of QR size
+        qr_w, qr_h = img.size
+        logo_size = qr_w // 4
+        logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
+        pos = ((qr_w - logo_size) // 2, (qr_h - logo_size) // 2)
+        img.paste(logo, pos, logo)
+
+    img.save(filename)
+    print(f"QR code saved as {filename}")
+    return img
+
+# Examples
+generate_qr("https://github.com",  "github_qr.png")
+generate_qr("Hello, World!",        "text_qr.png")
+
+# vCard contact QR
+vcard = """BEGIN:VCARD
+VERSION:3.0
+FN:John Doe
+ORG:AcademiCode
+TEL:+919999999999
+EMAIL:john@example.com
+END:VCARD"""
+generate_qr(vcard, "contact_qr.png")`,
+    vivaQA: [
+      { q: 'How does a QR code store data?', a: 'A QR code encodes data as a matrix of black and white squares. Different regions serve different purposes: finder patterns (the 3 corner squares) help scanners locate the code, timing patterns define the grid, and data modules store the actual encoded information in binary.' },
+      { q: 'What is error correction in QR codes?', a: 'QR codes use Reed-Solomon error correction which allows them to be scanned even if partially damaged or obscured. Level H (High) can restore up to 30% of the code — this is why you can put a logo in the center.' },
+      { q: 'What is pip and why do we use it?', a: 'pip is Python\'s package installer. It downloads and installs third-party libraries from PyPI (Python Package Index). Unlike the standard library (built-in), libraries like qrcode must be installed first.' },
+      { q: 'What is Pillow?', a: 'Pillow (PIL fork) is a Python imaging library that lets you open, create, edit, and save image files in many formats (PNG, JPEG, etc.). We use it to composite the logo onto the QR code and save the result.' },
+      { q: 'How would you build a web version of this?', a: 'Use a Python Flask backend to generate the QR code server-side (return it as a base64 PNG), and a simple HTML/JavaScript frontend that calls the Flask API and displays the image.' },
+    ],
+  },
+
+  {
+    id: 'basic-chatbot',
+    level: 'school',
+    title: 'Rule-based Chatbot',
+    category: 'ml',
+    difficulty: 'Beginner',
+    duration: '1-2 weeks',
+    tech: ['Python'],
+    summary: 'Build a simple conversational chatbot using if-else rules and keyword matching — your first step into AI and NLP.',
+    description: `Before neural network chatbots like ChatGPT, rule-based systems were the standard. In this project you will build a Python chatbot that responds to user inputs by matching keywords and patterns. It is a perfect introduction to string operations, dictionaries, and the concept of natural language processing.
+
+You will then upgrade it using Python's re (regular expressions) module for smarter pattern matching, making the bot handle variations in phrasing.`,
+    steps: [
+      'Define a dictionary of patterns and responses',
+      'Write a function to match user input to patterns',
+      'Build a conversation loop that runs until the user exits',
+      'Improve with synonym handling and fallback responses',
+      'Add a simple greeting with name recognition',
+    ],
+    sourceCode: `import re
+import random
+
+RESPONSES = {
+    r"hello|hi|hey": ["Hello! How can I help you?", "Hi there!", "Hey! What's up?"],
+    r"how are you": ["I'm just a bot, but I'm doing great!", "All good on my end!"],
+    r"your name|who are you": ["I'm AcaBot, your study assistant!", "Call me AcaBot."],
+    r"help": ["I can answer basic questions. Try asking me something!"],
+    r"bye|goodbye|exit": ["Goodbye! Study hard 📚", "See you later!"],
+    r"weather": ["I don't know the weather, but you can check openweathermap.org!"],
+    r"joke": ["Why do programmers prefer dark mode? Because light attracts bugs! 🐛"],
+    r"thank": ["You're welcome!", "Happy to help!", "Anytime!"],
+}
+
+FALLBACK = [
+    "I'm not sure I understand. Could you rephrase that?",
+    "Hmm, I don't have an answer for that yet.",
+    "That's beyond my knowledge! Try Googling it.",
+]
+
+def get_response(user_input):
+    text = user_input.lower().strip()
+    for pattern, replies in RESPONSES.items():
+        if re.search(pattern, text):
+            return random.choice(replies)
+    return random.choice(FALLBACK)
+
+def chat():
+    print("AcaBot: Hi! I'm AcaBot. Type 'bye' to exit.")
+    while True:
+        user = input("You: ").strip()
+        if not user:
+            continue
+        reply = get_response(user)
+        print(f"AcaBot: {reply}")
+        if re.search(r"bye|goodbye|exit", user.lower()):
+            break
+
+chat()`,
+    vivaQA: [
+      { q: 'What is the difference between a rule-based and an AI chatbot?', a: 'A rule-based chatbot uses predefined patterns and responses — it only knows what you program it to know. An AI chatbot (like ChatGPT) uses machine learning trained on massive text data to generate responses dynamically, handling inputs it has never seen before.' },
+      { q: 'What is a regular expression?', a: 'A regular expression (regex) is a pattern used to match strings. For example, r"hello|hi" matches any string containing "hello" or "hi". The re module in Python implements regex matching.' },
+      { q: 'What is a Python dictionary?', a: 'A dictionary is a key-value data structure. Keys are unique identifiers (strings, numbers) and values can be anything. It provides O(1) average lookup time, making it ideal for mapping patterns to responses.' },
+      { q: 'What is NLP (Natural Language Processing)?', a: 'NLP is a branch of AI that deals with the interaction between computers and human language. It involves tasks like sentiment analysis, translation, text classification, and building chatbots. Libraries like NLTK and spaCy help with NLP in Python.' },
+      { q: 'How would you upgrade this to a smarter chatbot?', a: 'Integrate an intent classification model (using sklearn or HuggingFace), or call the OpenAI API. You could also add a knowledge base (FAQ dataset) and use TF-IDF similarity to find the closest matching answer.' },
+    ],
+  },
+
+  {
+    id: 'contact-book',
+    level: 'school',
+    title: 'Contact Book App',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '1-2 weeks',
+    tech: ['Python', 'SQLite', 'Tkinter'],
+    summary: 'A desktop contact manager where you can add, search, update, and delete contacts — stored persistently in an SQLite database.',
+    description: `This project teaches you database fundamentals with SQLite — the most widely deployed database engine in the world. You will use Python's built-in sqlite3 module (no installation needed) to create a contacts table, insert records, query by name, update phone numbers, and delete entries.
+
+The Tkinter GUI makes it interactive, and the SQLite file persists your data between runs — just like a real app.`,
+    steps: [
+      'Create an SQLite database and contacts table',
+      'Write functions for CRUD operations (Create, Read, Update, Delete)',
+      'Build a Tkinter window with a form and a listbox',
+      'Connect form submission to database insert',
+      'Add search and delete features',
+    ],
+    sourceCode: `import sqlite3
+import tkinter as tk
+from tkinter import messagebox, ttk
+
+DB = "contacts.db"
+
+def init_db():
+    with sqlite3.connect(DB) as conn:
+        conn.execute("""CREATE TABLE IF NOT EXISTS contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT,
+            email TEXT
+        )""")
+
+def add_contact(name, phone, email):
+    with sqlite3.connect(DB) as conn:
+        conn.execute("INSERT INTO contacts(name,phone,email) VALUES(?,?,?)",
+                     (name, phone, email))
+
+def get_all():
+    with sqlite3.connect(DB) as conn:
+        return conn.execute("SELECT id,name,phone,email FROM contacts ORDER BY name").fetchall()
+
+def delete_contact(cid):
+    with sqlite3.connect(DB) as conn:
+        conn.execute("DELETE FROM contacts WHERE id=?", (cid,))
+
+def search_contacts(query):
+    with sqlite3.connect(DB) as conn:
+        return conn.execute(
+            "SELECT id,name,phone,email FROM contacts WHERE name LIKE ?",
+            (f"%{query}%",)
+        ).fetchall()
+
+init_db()
+print("Database ready. Use add_contact(), get_all(), delete_contact(), search_contacts().")
+# Example:
+add_contact("Alice", "+91-9000000001", "alice@example.com")
+add_contact("Bob",   "+91-9000000002", "bob@example.com")
+print(get_all())`,
+    vivaQA: [
+      { q: 'What is SQLite and how is it different from MySQL?', a: 'SQLite is a serverless, file-based relational database — the entire database is a single .db file. MySQL is a full client-server database requiring a running server process. SQLite is ideal for small apps; MySQL for large multi-user applications.' },
+      { q: 'What are CRUD operations?', a: 'CRUD stands for Create (INSERT), Read (SELECT), Update (UPDATE), Delete (DELETE) — the four fundamental database operations. Almost every application is built on these four operations.' },
+      { q: 'What is SQL injection and how do we prevent it?', a: 'SQL injection is an attack where malicious SQL code is inserted into a query through user input (e.g., entering \' OR 1=1 -- as a name). We prevent it using parameterized queries (?, ?) instead of string formatting — the sqlite3 module does this for us.' },
+      { q: 'What is a PRIMARY KEY?', a: 'A primary key is a column (or set of columns) that uniquely identifies each row in a table. With AUTOINCREMENT, SQLite automatically assigns a unique integer ID to each new row.' },
+      { q: 'What is a context manager (with statement)?', a: 'A context manager (the with keyword) automatically handles setup and teardown. For sqlite3.connect(), it ensures the transaction is committed and the connection is closed properly, even if an error occurs.' },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PG PROJECTS (M.Tech / Research)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'federated-learning',
+    level: 'pg',
+    title: 'Federated Learning for Privacy-Preserving ML',
+    category: 'ml',
+    difficulty: 'Advanced',
+    duration: '6-8 weeks',
+    tech: ['Python', 'TensorFlow', 'Flower (flwr)', 'NumPy'],
+    summary: 'Implement a federated learning system where multiple clients train local models and aggregate updates on a central server — without sharing raw data.',
+    description: `Federated Learning (FL) is a cutting-edge paradigm where a model is trained across multiple decentralized devices without transferring raw data to a central server. Each client trains on local data and sends only model weight updates (gradients), preserving data privacy.
+
+This project uses the Flower (flwr) framework to simulate a federated setup with multiple clients. You will implement FedAvg (Federated Averaging), the seminal algorithm by McMahan et al. (2017), on the MNIST dataset distributed across 10 simulated clients.
+
+This is a standard research topic for M.Tech theses in ML privacy and distributed systems.`,
+    steps: [
+      'Understand the FedAvg algorithm and federated vs. centralized training',
+      'Set up Flower server and client architecture',
+      'Implement local model training on partitioned MNIST data',
+      'Aggregate model updates on the server using weighted averaging',
+      'Compare federated vs. centralized accuracy over rounds',
+      'Experiment with non-IID data distribution (realistic scenario)',
+    ],
+    sourceCode: `import flwr as fl
+import tensorflow as tf
+import numpy as np
+
+# Load and partition MNIST
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+x_train, x_test = x_train / 255.0, x_test / 255.0
+
+def build_model():
+    return tf.keras.Sequential([
+        tf.keras.layers.Flatten(input_shape=(28,28)),
+        tf.keras.layers.Dense(128, activation='relu'),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(10, activation='softmax'),
+    ])
+
+class MNISTClient(fl.client.NumPyClient):
+    def __init__(self, client_id, num_clients=10):
+        self.model = build_model()
+        self.model.compile(optimizer='adam',
+                           loss='sparse_categorical_crossentropy',
+                           metrics=['accuracy'])
+        # Partition data across clients
+        shard = len(x_train) // num_clients
+        self.x = x_train[client_id*shard:(client_id+1)*shard]
+        self.y = y_train[client_id*shard:(client_id+1)*shard]
+
+    def get_parameters(self, config):
+        return self.model.get_weights()
+
+    def fit(self, parameters, config):
+        self.model.set_weights(parameters)
+        self.model.fit(self.x, self.y, epochs=1, batch_size=32, verbose=0)
+        return self.model.get_weights(), len(self.x), {}
+
+    def evaluate(self, parameters, config):
+        self.model.set_weights(parameters)
+        loss, acc = self.model.evaluate(x_test, y_test, verbose=0)
+        return loss, len(x_test), {"accuracy": acc}
+
+# Simulate federation with client_id = 0
+fl.client.start_numpy_client(server_address="localhost:8080",
+                              client=MNISTClient(client_id=0))`,
+    vivaQA: [
+      { q: 'What is Federated Learning and why is it important?', a: 'Federated Learning is a distributed ML approach where the model is trained across multiple clients (hospitals, phones, etc.) without centralizing raw data. It is important for privacy compliance (GDPR, HIPAA), reducing data transfer costs, and enabling ML on sensitive data like medical records.' },
+      { q: 'Explain the FedAvg algorithm.', a: 'FedAvg (McMahan et al., 2017) works as follows: (1) Server sends global model weights to all clients. (2) Each client trains locally for E epochs on its data. (3) Clients send updated weights back. (4) Server aggregates by weighted average (weighted by dataset size). Steps repeat for R rounds.' },
+      { q: 'What is the IID vs non-IID data problem in FL?', a: 'IID (Independent and Identically Distributed) means each client\'s data has the same distribution as the global dataset. In reality (non-IID), clients have heterogeneous data (e.g., a hospital specializing in cardiac cases). Non-IID data causes client drift and slower convergence.' },
+      { q: 'What are the privacy guarantees of federated learning?', a: 'Basic FL protects raw data but is still vulnerable to gradient inversion attacks (recovering training data from gradients). Stronger guarantees require Differential Privacy (adding calibrated noise to gradients) or Secure Aggregation (cryptographic protocols).' },
+      { q: 'What is differential privacy?', a: 'Differential privacy (DP) is a mathematical framework that guarantees an algorithm\'s output changes negligibly whether or not any single individual\'s data is included. In FL, DP is applied by clipping gradient norms and adding Gaussian noise before sending updates to the server.' },
+    ],
+  },
+
+  {
+    id: 'yolo-object-detection',
+    level: 'pg',
+    title: 'Real-Time Object Detection with YOLOv8',
+    category: 'ml',
+    difficulty: 'Advanced',
+    duration: '4-6 weeks',
+    tech: ['Python', 'YOLOv8', 'OpenCV', 'PyTorch', 'CUDA'],
+    summary: 'Train and deploy a YOLOv8 model to detect custom objects in real-time from webcam or video — including fine-tuning on your own dataset.',
+    description: `YOLO (You Only Look Once) is the gold standard for real-time object detection. YOLOv8 by Ultralytics is the state-of-the-art version that achieves 50+ FPS on a GPU with high accuracy.
+
+In this project you will start with the pretrained YOLOv8n model on COCO (80 classes), then fine-tune it on a custom dataset (e.g., face mask detection, PPE detection, or road signs). You will annotate training images using Roboflow, export in YOLO format, train for 50 epochs, and deploy a real-time inference pipeline using OpenCV.`,
+    steps: [
+      'Install ultralytics: pip install ultralytics',
+      'Run inference on pretrained YOLOv8n (COCO 80 classes)',
+      'Collect and annotate custom images using Roboflow',
+      'Export dataset in YOLOv8 format and configure data.yaml',
+      'Fine-tune: model.train(data="data.yaml", epochs=50)',
+      'Build real-time webcam inference with OpenCV',
+    ],
+    sourceCode: `from ultralytics import YOLO
+import cv2
+
+# ── 1. Pretrained inference ────────────────────────────────────────────────
+model = YOLO("yolov8n.pt")
+results = model("https://ultralytics.com/images/bus.jpg")
+results[0].show()
+
+# ── 2. Fine-tune on custom dataset ────────────────────────────────────────
+# Assumes dataset prepared in YOLOv8 format with data.yaml
+model = YOLO("yolov8n.pt")
+model.train(
+    data   = "data.yaml",
+    epochs = 50,
+    imgsz  = 640,
+    batch  = 16,
+    name   = "custom_detector",
+    device = "cuda",   # use 'cpu' if no GPU
+)
+
+# ── 3. Real-time webcam inference ─────────────────────────────────────────
+trained_model = YOLO("runs/detect/custom_detector/weights/best.pt")
+cap = cv2.VideoCapture(0)
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret: break
+
+    results = trained_model(frame, stream=True)
+    for r in results:
+        annotated = r.plot()   # Draw boxes + labels on frame
+    cv2.imshow("YOLOv8 Detection", annotated)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()`,
+    vivaQA: [
+      { q: 'How does YOLO differ from two-stage detectors like Faster R-CNN?', a: 'YOLO is a single-stage detector — it predicts bounding boxes and class probabilities in a single forward pass, making it very fast (real-time). Two-stage detectors like Faster R-CNN first propose regions of interest (RPN), then classify each — more accurate but slower.' },
+      { q: 'What is the anchor-free approach in YOLOv8?', a: 'Earlier YOLO versions (v3–v5) used predefined anchor boxes of fixed sizes. YOLOv8 is anchor-free — it directly predicts the center point and size of objects without anchors, simplifying training and improving generalization to small objects.' },
+      { q: 'What is IoU (Intersection over Union)?', a: 'IoU measures overlap between a predicted bounding box and the ground truth box: IoU = Area(Intersection) / Area(Union). A prediction is considered correct (true positive) if IoU > 0.5 (standard threshold). It is used to compute mAP (mean Average Precision).' },
+      { q: 'What is transfer learning and why is it used here?', a: 'Transfer learning reuses a model pretrained on a large dataset (COCO) as a starting point for a new task. The model already has learned low-level features (edges, textures) — fine-tuning only adapts the later layers to the new domain, requiring far less data and compute than training from scratch.' },
+      { q: 'What is mAP and how is it calculated?', a: 'mAP (mean Average Precision) is the standard metric for object detection. For each class, compute the precision-recall curve by varying the confidence threshold, then calculate the area under the curve (Average Precision). mAP averages this across all classes. mAP@0.5 is the most common variant.' },
+    ],
+  },
+
+  {
+    id: 'bert-text-classification',
+    level: 'pg',
+    title: 'BERT-based Text Classification Pipeline',
+    category: 'ml',
+    difficulty: 'Advanced',
+    duration: '4-5 weeks',
+    tech: ['Python', 'HuggingFace Transformers', 'PyTorch', 'BERT', 'scikit-learn'],
+    summary: 'Fine-tune a pre-trained BERT model for multi-class text classification (news categorization, spam detection, or emotion analysis).',
+    description: `BERT (Bidirectional Encoder Representations from Transformers) by Google revolutionized NLP in 2018. Unlike RNNs, BERT reads text bidirectionally and captures deep contextual relationships between words through the self-attention mechanism.
+
+In this project you will fine-tune bert-base-uncased for a 4-class news categorization task (AG News dataset). You will set up the HuggingFace Transformers training pipeline, implement a custom PyTorch DataLoader, and achieve 94%+ accuracy — significantly outperforming traditional ML approaches like TF-IDF + Logistic Regression.`,
+    steps: [
+      'Install transformers: pip install transformers datasets',
+      'Load AG News dataset from HuggingFace Hub',
+      'Tokenize text using BertTokenizer with padding/truncation',
+      'Build PyTorch Dataset and DataLoader',
+      'Fine-tune bert-base-uncased with AdamW optimizer for 3 epochs',
+      'Evaluate with accuracy, F1-score, and confusion matrix',
+    ],
+    sourceCode: `from transformers import BertTokenizer, BertForSequenceClassification, get_scheduler
+from datasets import load_dataset
+from torch.utils.data import DataLoader
+from torch.optim import AdamW
+import torch
+
+# ── Setup ─────────────────────────────────────────────────────────────────
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=4).to(device)
+
+# ── Data ──────────────────────────────────────────────────────────────────
+dataset = load_dataset("ag_news")
+
+def tokenize(batch):
+    return tokenizer(batch["text"], truncation=True, padding="max_length", max_length=128)
+
+tokenized = dataset.map(tokenize, batched=True)
+tokenized.set_format("torch", columns=["input_ids", "attention_mask", "label"])
+
+train_loader = DataLoader(tokenized["train"].select(range(4000)), batch_size=16, shuffle=True)
+test_loader  = DataLoader(tokenized["test"].select(range(800)),  batch_size=16)
+
+# ── Train ─────────────────────────────────────────────────────────────────
+optimizer = AdamW(model.parameters(), lr=2e-5)
+scheduler = get_scheduler("linear", optimizer, num_warmup_steps=50,
+                           num_training_steps=len(train_loader)*3)
+
+model.train()
+for epoch in range(3):
+    total_loss = 0
+    for batch in train_loader:
+        input_ids      = batch["input_ids"].to(device)
+        attention_mask = batch["attention_mask"].to(device)
+        labels         = batch["label"].to(device)
+
+        outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
+        loss = outputs.loss
+        loss.backward()
+        optimizer.step(); scheduler.step(); optimizer.zero_grad()
+        total_loss += loss.item()
+    print(f"Epoch {epoch+1} | Loss: {total_loss/len(train_loader):.4f}")`,
+    vivaQA: [
+      { q: 'What is the self-attention mechanism in BERT?', a: 'Self-attention allows each token to attend to every other token in the sequence when computing its representation. For each token, it computes Query, Key, and Value vectors; attention scores are dot products of Q and K (scaled by sqrt(d_k)), softmaxed, then used to weight sum the Values. This captures long-range dependencies.' },
+      { q: 'What is the difference between BERT and GPT?', a: 'BERT is an encoder-only model trained with Masked Language Modeling (MLM) and Next Sentence Prediction — it sees the full context bidirectionally. GPT is a decoder-only model trained autoregressively (predicting the next token). BERT excels at classification/NLU tasks; GPT at generation tasks.' },
+      { q: 'What is fine-tuning vs. training from scratch?', a: 'Training from scratch requires millions of data points and weeks of GPU time (BERT was trained on Wikipedia + BookCorpus). Fine-tuning starts from pretrained weights and adapts them to a downstream task with far less data (thousands of examples) and time (hours), leveraging already-learned language representations.' },
+      { q: 'What is the AdamW optimizer?', a: 'AdamW is Adam with decoupled weight decay. Standard Adam applies L2 regularization inside the gradient update (conflating regularization with gradient adaptation). AdamW applies weight decay separately, leading to better generalization — the standard choice for fine-tuning Transformers.' },
+      { q: 'What are attention heads and why use multiple?', a: 'Multi-head attention runs several attention operations in parallel, each learning to attend to different types of relationships (e.g., one head may focus on syntax, another on co-reference). The outputs are concatenated and projected. BERT-base uses 12 attention heads per layer across 12 layers.' },
+    ],
+  },
+
+  {
+    id: 'blockchain-certificate',
+    level: 'pg',
+    title: 'Blockchain-based Certificate Verification',
+    category: 'security',
+    difficulty: 'Advanced',
+    duration: '6-8 weeks',
+    tech: ['Solidity', 'Ethereum', 'Web3.js', 'React', 'MetaMask', 'Hardhat'],
+    summary: 'Issue tamper-proof academic certificates as smart contracts on the Ethereum blockchain — verifiable by anyone without a central authority.',
+    description: `Certificate fraud is a global problem. This project solves it by storing certificate hashes on the Ethereum blockchain — immutable, transparent, and decentralized. Universities can issue certificates, and anyone can verify authenticity by computing the hash and checking the blockchain.
+
+You will write a Solidity smart contract that stores certificate hashes, deploy it to a local Hardhat network (and optionally to the Goerli testnet), and build a React frontend using Web3.js and MetaMask for wallet-based signing.`,
+    steps: [
+      'Install Hardhat: npm install --save-dev hardhat',
+      'Write the CertificateRegistry Solidity smart contract',
+      'Compile and deploy to local Hardhat network',
+      'Write unit tests using Chai/Ethers.js',
+      'Build React frontend with MetaMask wallet connection',
+      'Issue and verify certificates via the UI',
+    ],
+    sourceCode: `// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+contract CertificateRegistry {
+    address public owner;
+
+    struct Certificate {
+        string  studentName;
+        string  courseName;
+        uint256 issueDate;
+        bool    isValid;
+    }
+
+    // certHash => Certificate
+    mapping(bytes32 => Certificate) private certificates;
+    // certHash => issuer address
+    mapping(bytes32 => address) public issuers;
+
+    event CertificateIssued(bytes32 indexed certHash, string studentName, address indexed issuer);
+    event CertificateRevoked(bytes32 indexed certHash);
+
+    modifier onlyOwner() { require(msg.sender == owner, "Not authorized"); _; }
+
+    constructor() { owner = msg.sender; }
+
+    function issueCertificate(
+        bytes32 certHash,
+        string calldata studentName,
+        string calldata courseName
+    ) external onlyOwner {
+        require(certificates[certHash].issueDate == 0, "Certificate already exists");
+        certificates[certHash] = Certificate(studentName, courseName, block.timestamp, true);
+        issuers[certHash] = msg.sender;
+        emit CertificateIssued(certHash, studentName, msg.sender);
+    }
+
+    function verifyCertificate(bytes32 certHash)
+        external view returns (bool valid, string memory studentName, string memory courseName, uint256 issueDate)
+    {
+        Certificate memory c = certificates[certHash];
+        return (c.isValid, c.studentName, c.courseName, c.issueDate);
+    }
+
+    function revokeCertificate(bytes32 certHash) external onlyOwner {
+        require(certificates[certHash].issueDate != 0, "Certificate not found");
+        certificates[certHash].isValid = false;
+        emit CertificateRevoked(certHash);
+    }
+}`,
+    vivaQA: [
+      { q: 'What is a smart contract?', a: 'A smart contract is self-executing code deployed on a blockchain. Once deployed, it runs exactly as programmed without any possibility of downtime, fraud, censorship, or third-party interference. The Ethereum Virtual Machine (EVM) executes smart contract bytecode deterministically across all nodes.' },
+      { q: 'Why is the blockchain suitable for certificate verification?', a: 'Blockchain is immutable (records cannot be altered), transparent (anyone can verify), decentralized (no single point of failure or authority), and timestamped. These properties make it ideal for any trust-critical record-keeping including academic credentials, land records, and supply chain provenance.' },
+      { q: 'What is a mapping in Solidity?', a: 'A mapping is a hash table data structure in Solidity: mapping(KeyType => ValueType). It stores key-value pairs with O(1) lookup. Unlike arrays, all unmapped keys default to zero/empty values, and mappings cannot be iterated — you must track keys separately if iteration is needed.' },
+      { q: 'What is the difference between storage, memory, and calldata in Solidity?', a: 'storage is persistent on-chain (expensive to write). memory is temporary within a function call (cheaper). calldata is read-only, non-modifiable data passed to external functions — the cheapest option for function parameters. Using calldata instead of memory for input parameters saves gas.' },
+      { q: 'What is gas in Ethereum?', a: 'Gas is the unit of computational work in Ethereum. Every EVM operation costs a fixed amount of gas. The total gas used multiplied by the gas price (in Gwei) is the transaction fee paid to validators. Storage operations are the most expensive (SSTORE costs 20,000 gas), while reads are cheaper (SLOAD costs 800).' },
+    ],
+  },
+
+  {
+    id: 'distributed-task-scheduler',
+    level: 'pg',
+    title: 'Distributed Task Scheduler with Redis & Celery',
+    category: 'web',
+    difficulty: 'Advanced',
+    duration: '5-6 weeks',
+    tech: ['Python', 'FastAPI', 'Celery', 'Redis', 'Docker', 'Flower'],
+    summary: 'Build a scalable distributed task queue where a FastAPI server enqueues jobs, Celery workers process them asynchronously, and Redis acts as the message broker.',
+    description: `Distributed task queues are at the heart of scalable systems — used by Instagram, Pinterest, and thousands of companies for background processing (sending emails, processing images, generating reports).
+
+In this project you build a complete system: a FastAPI REST API that accepts task requests, a Redis broker that queues them, multiple Celery workers that process tasks in parallel, and a Flower dashboard for real-time monitoring. Docker Compose ties everything together.`,
+    steps: [
+      'Set up Docker Compose with FastAPI, Redis, and Celery worker services',
+      'Configure Celery with Redis as broker and result backend',
+      'Define Celery tasks (image resize, email send simulation, report generation)',
+      'Build FastAPI endpoints to enqueue tasks and poll results',
+      'Scale workers: docker-compose up --scale worker=4',
+      'Monitor with Flower dashboard and implement task retry logic',
+    ],
+    sourceCode: `# tasks.py
+from celery import Celery
+import time, random
+
+app = Celery(
+    "tasks",
+    broker="redis://localhost:6379/0",
+    backend="redis://localhost:6379/1",
+)
+app.conf.task_serializer = "json"
+app.conf.result_expires  = 3600
+
+@app.task(bind=True, max_retries=3, default_retry_delay=5)
+def process_report(self, report_id: str, data: dict):
+    try:
+        # Simulate time-consuming work
+        time.sleep(random.uniform(1, 3))
+        result = {"report_id": report_id, "rows": len(data), "status": "completed"}
+        return result
+    except Exception as exc:
+        raise self.retry(exc=exc)
+
+# main.py (FastAPI)
+from fastapi import FastAPI
+from tasks import process_report
+
+api = FastAPI()
+
+@api.post("/reports")
+async def create_report(report_id: str, rows: int):
+    data = {"rows": list(range(rows))}
+    task = process_report.delay(report_id, data)
+    return {"task_id": task.id, "status": "queued"}
+
+@api.get("/reports/{task_id}")
+async def get_result(task_id: str):
+    task = process_report.AsyncResult(task_id)
+    if task.state == "SUCCESS":
+        return {"status": "done", "result": task.result}
+    return {"status": task.state}`,
+    vivaQA: [
+      { q: 'What is a message broker and why do we use Redis for it?', a: 'A message broker is middleware that accepts messages from producers (FastAPI) and routes them to consumers (Celery workers). Redis is used because it supports pub/sub, list-based queues (LPUSH/BRPOP), and is extremely fast (in-memory). RabbitMQ is the alternative for more complex routing needs.' },
+      { q: 'What is the difference between synchronous and asynchronous processing?', a: 'Synchronous: the client waits for the server to complete the task before getting a response (blocking). Asynchronous: the server immediately returns a task ID; the client polls for the result later (non-blocking). Async is essential for long-running tasks to avoid HTTP timeouts and improve throughput.' },
+      { q: 'What is idempotency and why does it matter in task queues?', a: 'An idempotent operation produces the same result regardless of how many times it is executed. In distributed systems, tasks may be retried due to worker failures, so tasks must be idempotent to avoid side effects (e.g., sending an email twice). Use unique IDs and check-before-execute patterns.' },
+      { q: 'What is Docker Compose and why is it useful here?', a: 'Docker Compose defines and runs multi-container applications with a single YAML file. Here we define 4 services: FastAPI, Redis, Celery worker, and Flower. Compose handles networking, startup order, and scaling (--scale worker=4 spawns 4 worker containers) — eliminating "works on my machine" problems.' },
+      { q: 'How would you handle task prioritization?', a: 'Celery supports multiple queues with different priorities: route high-priority tasks (e.g., user-facing actions) to a high queue processed by dedicated workers, and low-priority tasks (batch reports) to a low queue. Use route_task to map task types to queues and assign worker queues with -Q high,low flags.' },
+    ],
+  },
+
+  {
+    id: 'unet-medical-segmentation',
+    level: 'pg',
+    title: 'Medical Image Segmentation with U-Net',
+    category: 'ml',
+    difficulty: 'Advanced',
+    duration: '6-8 weeks',
+    tech: ['Python', 'PyTorch', 'U-Net', 'OpenCV', 'albumentations', 'DICOM'],
+    summary: 'Train a U-Net architecture to segment tumors or organs in medical images — a foundational task in medical AI used in clinical diagnosis.',
+    description: `Medical image segmentation is one of the highest-impact applications of deep learning. U-Net (Ronneberger et al., 2015) is the dominant architecture — its encoder-decoder structure with skip connections allows precise pixel-level segmentation even with limited training data.
+
+In this project you will train U-Net on the DRIVE retinal vessel dataset (or the Carvana dataset as an accessible alternative), implement IoU and Dice coefficient evaluation metrics, apply medical-grade data augmentation using albumentations, and generate segmentation masks with visual overlays.`,
+    steps: [
+      'Implement the U-Net architecture from scratch in PyTorch',
+      'Load and preprocess the DRIVE dataset (TIFF/PNG medical images)',
+      'Apply augmentations: random flips, elastic transform, color jitter',
+      'Implement Dice loss and IoU metric for segmentation evaluation',
+      'Train for 50 epochs with early stopping on validation Dice score',
+      'Visualize predictions as color overlays on original images',
+    ],
+    sourceCode: `import torch
+import torch.nn as nn
+
+class DoubleConv(nn.Module):
+    def __init__(self, in_ch, out_ch):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(in_ch, out_ch, 3, padding=1, bias=False),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_ch, out_ch, 3, padding=1, bias=False),
+            nn.BatchNorm2d(out_ch),
+            nn.ReLU(inplace=True),
+        )
+    def forward(self, x): return self.conv(x)
+
+class UNet(nn.Module):
+    def __init__(self, in_channels=3, out_channels=1, features=[64,128,256,512]):
+        super().__init__()
+        self.downs = nn.ModuleList()
+        self.ups   = nn.ModuleList()
+        self.pool  = nn.MaxPool2d(2, 2)
+
+        for f in features:
+            self.downs.append(DoubleConv(in_channels, f))
+            in_channels = f
+
+        self.bottleneck = DoubleConv(features[-1], features[-1]*2)
+
+        for f in reversed(features):
+            self.ups.append(nn.ConvTranspose2d(f*2, f, 2, 2))
+            self.ups.append(DoubleConv(f*2, f))
+
+        self.final = nn.Conv2d(features[0], out_channels, 1)
+
+    def forward(self, x):
+        skips = []
+        for down in self.downs:
+            x = down(x); skips.append(x); x = self.pool(x)
+        x = self.bottleneck(x)
+        skips = skips[::-1]
+        for i in range(0, len(self.ups), 2):
+            x = self.ups[i](x)
+            skip = skips[i//2]
+            if x.shape != skip.shape:
+                x = torch.nn.functional.interpolate(x, size=skip.shape[2:])
+            x = self.ups[i+1](torch.cat([skip, x], dim=1))
+        return self.final(x)
+
+# Dice loss for segmentation
+def dice_loss(pred, target, smooth=1e-6):
+    pred   = torch.sigmoid(pred)
+    inter  = (pred * target).sum(dim=(2,3))
+    return 1 - (2*inter + smooth) / (pred.sum(dim=(2,3)) + target.sum(dim=(2,3)) + smooth)`,
+    vivaQA: [
+      { q: 'What is the U-Net architecture and what makes it suitable for medical imaging?', a: 'U-Net has an encoder (contracting path) that captures context through convolution and max-pooling, and a decoder (expansive path) that reconstructs spatial information through transposed convolutions. Skip connections concatenate encoder feature maps to decoder layers, preserving fine-grained spatial details lost during downsampling. This is critical in medical imaging where precise boundary delineation matters.' },
+      { q: 'Why use Dice loss instead of Binary Cross-Entropy for segmentation?', a: 'Medical images are highly imbalanced — tumor pixels may represent less than 1% of the image. BCE treats each pixel independently and is dominated by the background class, causing the model to predict all-background (high accuracy, zero recall). Dice loss directly optimizes the overlap between prediction and ground truth, handling class imbalance naturally.' },
+      { q: 'What are skip connections and what problem do they solve?', a: 'Skip connections directly link encoder layers to corresponding decoder layers by concatenation. During downsampling, spatial information (exact locations of edges, boundaries) is progressively lost. Skip connections bypass this loss by routing high-resolution feature maps from the encoder directly to the decoder, enabling precise localization.' },
+      { q: 'What is the Dice coefficient?', a: 'Dice = 2 × |Prediction ∩ Ground Truth| / (|Prediction| + |Ground Truth|). It measures the overlap between predicted and true segmentation masks, ranging from 0 (no overlap) to 1 (perfect). It is equivalent to the F1-score applied to pixel-level binary classification.' },
+      { q: 'What data augmentation techniques are appropriate for medical images?', a: 'Medical images require careful augmentation: random horizontal/vertical flips, random rotation (±30°), elastic deformation (realistic tissue deformation), random brightness/contrast, and Gaussian noise. Unlike natural images, vertical flips may be clinically meaningful (an upside-down chest X-ray), so augmentations should be clinically validated for each modality.' },
     ],
   },
 ]

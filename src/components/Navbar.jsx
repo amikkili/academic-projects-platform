@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Code2, Menu, X, LogIn, LogOut, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { levels, categories, projects } from '../data/projects'
 
 export default function Navbar() {
-  const [open,     setOpen]     = useState(false)
-  const [scrolled, setScrolled] = useState(false)
-  const { pathname }            = useLocation()
-  const { user, isLoggedIn, logout } = useAuth()
+  const [open,          setOpen]          = useState(false)
+  const [scrolled,      setScrolled]      = useState(false)
+  const [projDropOpen,  setProjDropOpen]  = useState(false)
+  const [hoveredLevel,  setHoveredLevel]  = useState('school')
+  const { pathname }                      = useLocation()
+  const navigate                          = useNavigate()
+  const { user, isLoggedIn, logout }      = useAuth()
+  const projDropRef                       = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -15,11 +20,20 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => setOpen(false), [pathname])
+  useEffect(() => { setOpen(false); setProjDropOpen(false) }, [pathname])
+
+  // Close projects dropdown on outside click
+  useEffect(() => {
+    const handler = e => {
+      if (projDropRef.current && !projDropRef.current.contains(e.target))
+        setProjDropOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
 
   const navLinks = [
     { to: '/',                label: 'Home' },
-    { to: '/projects',        label: 'Projects' },
     { to: '/project-fit',     label: 'Project Fit' },
     { to: '/internal-marks',  label: 'Marks' },
     { to: '/hr-prep',         label: 'HR Prep' },
@@ -29,6 +43,21 @@ export default function Navbar() {
     { to: '/pricing',         label: 'Pricing' },
     { to: '/contact',         label: 'Contact Us' },
   ]
+
+  // Level tabs excluding 'all'
+  const levelTabs = levels.filter(l => l.id !== 'all')
+
+  // Topics for a level that have at least one project
+  const topicsForLevel = (levelId) =>
+    categories.filter(c => projects.some(p => p.level === levelId && p.category === c.id))
+
+  const goToTopic = (levelId, catId) => {
+    setProjDropOpen(false)
+    setOpen(false)
+    navigate(`/projects?level=${levelId}&cat=${catId}`)
+  }
+
+  const isProjectsActive = pathname === '/projects' || pathname.startsWith('/projects/')
 
   const initials = user?.name
     ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
@@ -56,25 +85,118 @@ export default function Navbar() {
 
           {/* ── Nav links — centered absolutely ── */}
           <div className="hidden xl:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
-            {navLinks.map(l => (
+
+            {/* Home */}
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                  isActive ? 'text-white bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>Home{isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />}</>
+              )}
+            </NavLink>
+
+            {/* Projects dropdown */}
+            <div className="relative" ref={projDropRef}>
+              <button
+                onClick={() => setProjDropOpen(o => !o)}
+                className={`relative flex items-center gap-1 flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                  isProjectsActive || projDropOpen
+                    ? 'text-white bg-white/10'
+                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Projects
+                <ChevronDown size={13} className={`transition-transform duration-200 ${projDropOpen ? 'rotate-180' : ''}`} />
+                {isProjectsActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />}
+              </button>
+
+              {/* Cascading two-tier dropdown */}
+              {projDropOpen && (
+                <div className="absolute top-full left-0 mt-2 flex shadow-2xl z-50 rounded-xl overflow-visible"
+                     style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}>
+
+                  {/* Tier 1 — Level list */}
+                  <div className="bg-[#0d2240] border border-white/10 rounded-l-xl w-48 py-1.5 flex-shrink-0">
+                    <p className="px-4 pt-1.5 pb-2 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                      Select Level
+                    </p>
+                    {levelTabs.map(lv => {
+                      const isHov = hoveredLevel === lv.id
+                      return (
+                        <button
+                          key={lv.id}
+                          onMouseEnter={() => setHoveredLevel(lv.id)}
+                          className={`w-full flex items-center gap-2 px-4 py-2.5 text-left transition-all ${
+                            isHov
+                              ? 'bg-brand-orange/15 text-white border-l-2 border-brand-orange'
+                              : 'text-white/65 hover:text-white border-l-2 border-transparent'
+                          }`}
+                        >
+                          <span className="flex-1 text-sm font-semibold">{lv.label}</span>
+                          <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
+                            isHov ? 'bg-brand-orange text-white' : 'bg-white/10 text-white/40'
+                          }`}>
+                            {projects.filter(p => p.level === lv.id).length}
+                          </span>
+                          <span className={`text-xs ${isHov ? 'text-brand-orange' : 'text-white/20'}`}>▶</span>
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {/* Tier 2 — Topics for hovered level */}
+                  <div className="bg-[#112d52] border border-l-0 border-white/10 rounded-r-xl w-52 py-1.5 flex-shrink-0">
+                    {(() => {
+                      const lv     = levelTabs.find(l => l.id === hoveredLevel)
+                      const topics = topicsForLevel(hoveredLevel)
+                      return (
+                        <>
+                          <p className="px-4 pt-1.5 pb-2 text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                            {lv?.label} Topics
+                          </p>
+                          {topics.map(cat => {
+                            const count = projects.filter(p => p.level === hoveredLevel && p.category === cat.id).length
+                            return (
+                              <button
+                                key={cat.id}
+                                onClick={() => goToTopic(hoveredLevel, cat.id)}
+                                className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-white/65 hover:bg-white/8 hover:text-white transition-all group"
+                              >
+                                <span className="flex-1 text-sm font-medium group-hover:text-white">{cat.label}</span>
+                                <span className="text-[11px] text-white/25 group-hover:text-white/60 font-semibold">{count}</span>
+                              </button>
+                            )
+                          })}
+                        </>
+                      )
+                    })()}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Rest of nav links */}
+            {navLinks.filter(l => l.to !== '/').map(l => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 end={l.to === '/'}
                 className={({ isActive }) =>
                   `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
-                    isActive
-                      ? 'text-white bg-white/10'
-                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                    isActive ? 'text-white bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
                     {l.label}
-                    {isActive && (
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />
-                    )}
+                    {isActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />}
                   </>
                 )}
               </NavLink>
@@ -141,7 +263,49 @@ export default function Navbar() {
       {/* ── Mobile drawer ── */}
       {open && (
         <div className="xl:hidden bg-[#0B1D3A] border-t border-white/8 px-4 py-3 space-y-0.5 shadow-2xl">
-          {navLinks.map(l => (
+          {/* Home */}
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                isActive ? 'text-white bg-white/10 border-l-2 border-brand-orange pl-[10px]' : 'text-white/60 hover:text-white hover:bg-white/7'
+              }`
+            }
+          >Home</NavLink>
+
+          {/* Projects — expandable in mobile */}
+          <div>
+            <button
+              onClick={() => setProjDropOpen(o => !o)}
+              className="w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/7 transition"
+            >
+              Projects
+              <ChevronDown size={13} className={`ml-auto transition-transform ${projDropOpen ? 'rotate-180 text-brand-orange' : ''}`} />
+            </button>
+            {projDropOpen && (
+              <div className="ml-3 mt-0.5 space-y-3 pb-2">
+                {levelTabs.map(lv => (
+                  <div key={lv.id}>
+                    <p className="px-3 py-1 text-white/40 text-[11px] font-bold uppercase tracking-wider">{lv.label}</p>
+                    {topicsForLevel(lv.id).map(cat => (
+                      <button
+                        key={cat.id}
+                        onClick={() => goToTopic(lv.id, cat.id)}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/7 text-sm transition"
+                      >
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
+                        <span className="ml-auto text-white/30 text-xs">{projects.filter(p => p.level === lv.id && p.category === cat.id).length}</span>
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {navLinks.filter(l => l.to !== '/').map(l => (
             <NavLink
               key={l.to}
               to={l.to}
