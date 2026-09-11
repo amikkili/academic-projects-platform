@@ -294,7 +294,6 @@ export default function Navbar() {
                         onClick={() => goToTopic(lv.id, cat.id)}
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/7 text-sm transition"
                       >
-                        <span>{cat.icon}</span>
                         <span>{cat.label}</span>
                         <span className="ml-auto text-white/30 text-xs">{projects.filter(p => p.level === lv.id && p.category === cat.id).length}</span>
                       </button>
