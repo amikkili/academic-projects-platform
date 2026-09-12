@@ -62,61 +62,129 @@ function CodeBlock({ code }) {
 function ScreenshotGallery({ screenshots }) {
   const [active, setActive] = useState(0)
   if (!screenshots || screenshots.length === 0) return null
+
+  const prev = () => setActive(i => (i - 1 + screenshots.length) % screenshots.length)
+  const next = () => setActive(i => (i + 1) % screenshots.length)
+
+  const shortLabel = (label) => label.split('—')[0].split('–')[0].trim()
+
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+
       {/* Header */}
-      <div className="px-7 pt-6 pb-4 border-b border-slate-100 flex items-center gap-2">
-        <MonitorPlay size={20} className="text-brand-orange" />
-        <h2 className="text-xl font-bold text-[#0B1D3A]">Project Preview</h2>
-        <span className="ml-auto text-xs text-slate-400 font-medium">What you will build</span>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <MonitorPlay size={17} className="text-brand-orange" />
+          <span className="font-bold text-brand-navy text-[15px]">Project Preview</span>
+          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold uppercase tracking-widest">
+            Live Screenshots
+          </span>
+        </div>
+        <span className="text-xs text-slate-400 font-medium tabular-nums">
+          {active + 1} / {screenshots.length}
+        </span>
       </div>
 
-      {/* Main image */}
-      <div className="relative bg-slate-900 flex items-center justify-center overflow-hidden" style={{ minHeight: '280px' }}>
-        <img
-          key={active}
-          src={screenshots[active].url}
-          alt={screenshots[active].label}
-          className="w-full object-contain max-h-[420px]"
-          style={{ display: 'block' }}
-        />
-        {/* Prev / Next arrows */}
-        {screenshots.length > 1 && (
-          <>
-            <button
-              onClick={() => setActive(i => (i - 1 + screenshots.length) % screenshots.length)}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition"
-            >
-              ‹
-            </button>
-            <button
-              onClick={() => setActive(i => (i + 1) % screenshots.length)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition"
-            >
-              ›
-            </button>
-          </>
-        )}
-        {/* Label overlay */}
-        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3">
-          <p className="text-white text-sm font-medium">{screenshots[active].label}</p>
+      {/* Browser chrome + screenshot */}
+      <div className="bg-gradient-to-b from-slate-100 to-slate-200 p-4">
+        <div className="rounded-xl overflow-hidden shadow-xl border border-slate-300/60">
+
+          {/* Fake browser bar */}
+          <div className="bg-slate-100 border-b border-slate-200 px-4 py-2.5 flex items-center gap-3">
+            <div className="flex gap-1.5 flex-shrink-0">
+              <span className="w-3 h-3 rounded-full bg-red-400 block" />
+              <span className="w-3 h-3 rounded-full bg-yellow-400 block" />
+              <span className="w-3 h-3 rounded-full bg-green-400 block" />
+            </div>
+            <div className="flex-1 bg-white border border-slate-200 rounded-md px-3 py-1 flex items-center gap-1.5 min-w-0">
+              <Globe size={10} className="text-slate-400 flex-shrink-0" />
+              <span className="text-slate-400 text-[11px] font-mono truncate">
+                localhost:3000 · {shortLabel(screenshots[active].label)}
+              </span>
+            </div>
+          </div>
+
+          {/* Image window — fixed height, shows top of screenshot */}
+          <div className="relative overflow-hidden bg-white" style={{ height: 320 }}>
+            <img
+              key={active}
+              src={screenshots[active].url}
+              alt={screenshots[active].label}
+              className="w-full object-cover object-top"
+              style={{ display: 'block' }}
+            />
+
+            {/* Fade-out at the bottom to hint at more content */}
+            <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-white/80 to-transparent pointer-events-none" />
+
+            {/* Arrow buttons */}
+            {screenshots.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md hover:shadow-lg text-slate-600 hover:text-brand-navy flex items-center justify-center text-xl transition-all border border-slate-200"
+                >‹</button>
+                <button
+                  onClick={next}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md hover:shadow-lg text-slate-600 hover:text-brand-navy flex items-center justify-center text-xl transition-all border border-slate-200"
+                >›</button>
+              </>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Caption */}
+      <div className="px-6 py-2.5 border-t border-slate-100 bg-slate-50">
+        <p className="text-sm text-slate-600 font-medium leading-snug">{screenshots[active].label}</p>
       </div>
 
       {/* Thumbnail strip */}
       {screenshots.length > 1 && (
-        <div className="flex gap-2 p-4 bg-slate-50 overflow-x-auto">
+        <div className="flex gap-2.5 px-5 py-4 overflow-x-auto">
           {screenshots.map((s, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
-              className={`flex-shrink-0 rounded-xl overflow-hidden border-2 transition ${
-                active === i ? 'border-brand-orange shadow-md' : 'border-transparent opacity-60 hover:opacity-90'
+              className={`flex-shrink-0 rounded-lg overflow-hidden transition-all text-left ${
+                active === i
+                  ? 'ring-2 ring-brand-orange shadow-md scale-105'
+                  : 'ring-1 ring-slate-200 opacity-50 hover:opacity-90 hover:ring-slate-300 hover:scale-102'
               }`}
-              style={{ width: 120 }}
+              style={{ width: 128 }}
             >
-              <img src={s.url} alt={s.label} className="w-full h-16 object-cover object-top" />
+              {/* Mini browser chrome */}
+              <div className="bg-slate-200 px-2 py-1 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400/70 block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-yellow-400/70 block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400/70 block" />
+              </div>
+              <img
+                src={s.url}
+                alt={s.label}
+                className="w-full h-[60px] object-cover object-top"
+              />
+              <div className={`px-2 py-1.5 text-[10px] font-semibold truncate leading-none ${
+                active === i ? 'bg-brand-orange/10 text-brand-orange' : 'bg-white text-slate-500'
+              }`}>
+                {shortLabel(s.label)}
+              </div>
             </button>
+          ))}
+        </div>
+      )}
+
+      {/* Dot indicators */}
+      {screenshots.length > 1 && (
+        <div className="flex justify-center gap-1.5 pb-4">
+          {screenshots.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`rounded-full transition-all duration-200 ${
+                active === i ? 'w-5 h-2 bg-brand-orange' : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+              }`}
+            />
           ))}
         </div>
       )}
