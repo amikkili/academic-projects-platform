@@ -59,6 +59,71 @@ function CodeBlock({ code }) {
   )
 }
 
+function ScreenshotGallery({ screenshots }) {
+  const [active, setActive] = useState(0)
+  if (!screenshots || screenshots.length === 0) return null
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      {/* Header */}
+      <div className="px-7 pt-6 pb-4 border-b border-slate-100 flex items-center gap-2">
+        <MonitorPlay size={20} className="text-brand-orange" />
+        <h2 className="text-xl font-bold text-[#0B1D3A]">Project Preview</h2>
+        <span className="ml-auto text-xs text-slate-400 font-medium">What you will build</span>
+      </div>
+
+      {/* Main image */}
+      <div className="relative bg-slate-900 flex items-center justify-center overflow-hidden" style={{ minHeight: '280px' }}>
+        <img
+          key={active}
+          src={screenshots[active].url}
+          alt={screenshots[active].label}
+          className="w-full object-contain max-h-[420px]"
+          style={{ display: 'block' }}
+        />
+        {/* Prev / Next arrows */}
+        {screenshots.length > 1 && (
+          <>
+            <button
+              onClick={() => setActive(i => (i - 1 + screenshots.length) % screenshots.length)}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => setActive(i => (i + 1) % screenshots.length)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition"
+            >
+              ›
+            </button>
+          </>
+        )}
+        {/* Label overlay */}
+        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-5 py-3">
+          <p className="text-white text-sm font-medium">{screenshots[active].label}</p>
+        </div>
+      </div>
+
+      {/* Thumbnail strip */}
+      {screenshots.length > 1 && (
+        <div className="flex gap-2 p-4 bg-slate-50 overflow-x-auto">
+          {screenshots.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`flex-shrink-0 rounded-xl overflow-hidden border-2 transition ${
+                active === i ? 'border-brand-orange shadow-md' : 'border-transparent opacity-60 hover:opacity-90'
+              }`}
+              style={{ width: 120 }}
+            >
+              <img src={s.url} alt={s.label} className="w-full h-16 object-cover object-top" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function VivaItem({ qa, index }) {
   const [open, setOpen] = useState(false)
   return (
@@ -205,7 +270,7 @@ export default function ProjectDetail() {
 
   if (!project) return <Navigate to="/projects" replace />
 
-  const { title, category, difficulty, duration, tech, description, steps, sourceCode, vivaQA, summary } = project
+  const { title, category, difficulty, duration, tech, description, steps, sourceCode, vivaQA, summary, screenshots } = project
   const {
     prerequisites = [],
     ideSteps = [],
@@ -355,6 +420,9 @@ export default function ProjectDetail() {
                   </span>
                 </button>
               </div>
+
+              {/* Screenshot gallery */}
+              <ScreenshotGallery screenshots={screenshots} />
 
               {/* Description */}
               <div className="bg-white rounded-2xl border border-slate-100 p-7">

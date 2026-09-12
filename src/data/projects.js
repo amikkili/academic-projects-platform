@@ -723,6 +723,190 @@ public class BookIssuanceService {
     ],
   },
 
+  {
+    id: 'attendance-tracker',
+    level: 'ug',
+    title: 'Student Attendance Management System',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '2-3 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'JWT'],
+    summary: 'A web-based attendance tracker where teachers manage students and lectures, mark attendance per session, and view per-student attendance reports with low-attendance alerts.',
+    description: `This project builds a complete classroom attendance management system. Teachers can add students (with class and roll number), create lecture sessions with subject/topic/time, and mark each student as Present, Absent, or Late for every lecture.
+
+The dashboard displays live statistics — total students, lectures today, present/absent/late counts — and flags students with attendance below 75% with a warning panel. The Reports page shows each student's running attendance percentage with a colour-coded progress bar. All data is persisted in MongoDB via a Node.js/Express REST API, with JWT-protected routes.`,
+    steps: [
+      'Design MongoDB schemas: Student, Lecture, AttendanceRecord',
+      'Build REST API: CRUD for students, lectures, and attendance marking',
+      'Implement JWT auth with teacher login',
+      'Build React dashboard with stat tiles and low-attendance warnings',
+      'Create Students and Lectures management pages (add, edit, delete)',
+      'Build Reports page with per-student attendance % and progress bars',
+    ],
+    screenshots: [
+      { url: '/previews/attendance-tracker/01_dashboard.png', label: 'Dashboard — live stats, warnings & recent lectures' },
+      { url: '/previews/attendance-tracker/02_students.png',  label: 'Students — add, edit, delete with class filter' },
+      { url: '/previews/attendance-tracker/03_lectures.png',  label: 'Lectures — session list with P/A/L counts' },
+      { url: '/previews/attendance-tracker/04_reports.png',   label: 'Reports — per-student attendance % with progress bars' },
+    ],
+    sourceCode: `// models/AttendanceRecord.js
+const mongoose = require('mongoose');
+
+const AttendanceSchema = new mongoose.Schema({
+  lecture: { type: mongoose.Schema.Types.ObjectId, ref: 'Lecture', required: true },
+  student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true },
+  status:  { type: String, enum: ['present','absent','late'], required: true },
+}, { timestamps: true });
+
+AttendanceSchema.index({ lecture: 1, student: 1 }, { unique: true });
+module.exports = mongoose.model('AttendanceRecord', AttendanceSchema);
+
+// routes/reports.js — Attendance percentage per student
+router.get('/summary', auth, async (req, res) => {
+  const students = await Student.find().sort('name');
+  const lectures  = await Lecture.countDocuments();
+
+  const report = await Promise.all(students.map(async (s) => {
+    const present = await AttendanceRecord.countDocuments({
+      student: s._id,
+      status:  { $in: ['present', 'late'] },
+    });
+    return {
+      student:     s,
+      present,
+      absent:      lectures - present,
+      percentage:  lectures ? Math.round((present / lectures) * 100) : 0,
+    };
+  }));
+
+  res.json(report);
+});
+
+// routes/attendance.js — Mark bulk attendance for a lecture
+router.post('/mark', auth, async (req, res) => {
+  const { lectureId, records } = req.body;
+  // records = [{ studentId, status }]
+
+  const ops = records.map(r => ({
+    updateOne: {
+      filter: { lecture: lectureId, student: r.studentId },
+      update: { $set: { status: r.status } },
+      upsert: true,
+    },
+  }));
+
+  await AttendanceRecord.bulkWrite(ops);
+  res.json({ marked: records.length });
+});`,
+    vivaQA: [
+      { q: 'What is the purpose of the unique compound index on lecture + student?', a: 'It ensures each student can only have one attendance record per lecture — preventing duplicate entries when the teacher accidentally marks the same student twice. The upsert in bulkWrite then safely updates the existing record instead of throwing an error.' },
+      { q: 'What does bulkWrite() do and why is it better than looping insert?', a: 'bulkWrite() sends all write operations to MongoDB in a single network round-trip instead of one request per student. For a class of 60 students it reduces 60 database round-trips to 1, significantly reducing latency when marking attendance for a full class.' },
+      { q: 'How would you implement the 75% low-attendance alert?', a: 'In the summary API, compute percentage = (present / totalLectures) * 100 for each student. On the frontend, filter students where percentage < 75 and render them in a highlighted warning table. This threshold could be made configurable per institution.' },
+      { q: 'What is the difference between present and late in attendance?', a: 'Both present and late are counted as attendance (student was physically in class). Late is a separate status to flag habitual tardiness. The attendance percentage formula counts both: present + late / total lectures. A separate report can show late frequency as a discipline metric.' },
+      { q: 'How would you export attendance reports to Excel?', a: 'Use the exceljs or xlsx npm package on the backend: create a workbook, add a worksheet, write column headers and student rows (name, class, present, absent, percentage), then send the file as a Buffer with Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.' },
+    ],
+  },
+
+  {
+    id: 'shopzone-ecommerce',
+    level: 'ug',
+    title: 'ShopZone — E-Commerce Web Application',
+    category: 'web',
+    difficulty: 'Intermediate',
+    duration: '4-5 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Razorpay'],
+    summary: 'A full-featured e-commerce platform with a product shop, shopping cart, order management, and an admin panel to manage inventory — built with the MERN stack.',
+    description: `ShopZone is a complete e-commerce web application built on the MERN stack (MongoDB, Express, React, Node.js). Customers can browse products by category, search by name, add items to a cart, and place orders with payment integration via Razorpay.
+
+The admin panel allows the store owner to add/edit/delete products with images, view all orders (filterable by status), update order status (Pending → Shipped → Delivered), and monitor store metrics. JWT authentication handles both customer and admin roles with role-based route protection.`,
+    steps: [
+      'Design MongoDB schemas: Product, User, Cart, Order',
+      'Build REST API: auth, products CRUD, cart, order placement',
+      'Create Shop page with search, category filter, and product cards',
+      'Implement Cart: add/remove items, quantity update, price totals',
+      'Integrate Razorpay for payment and create order on success',
+      'Build Admin panel: product management + order status tracking',
+    ],
+    screenshots: [
+      { url: '/previews/shopzone/01_shop.png',   label: 'Shop — browse products with search and category filter' },
+      { url: '/previews/shopzone/02_cart.png',   label: 'Cart — manage items and proceed to checkout' },
+      { url: '/previews/shopzone/03_orders.png', label: 'Orders — track all orders with status and actions' },
+    ],
+    sourceCode: `// models/Order.js
+const mongoose = require('mongoose');
+
+const OrderItemSchema = new mongoose.Schema({
+  product:  { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+  name:     String,
+  price:    Number,
+  qty:      Number,
+  image:    String,
+});
+
+const OrderSchema = new mongoose.Schema({
+  user:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  items:     [OrderItemSchema],
+  total:     { type: Number, required: true },
+  status:    { type: String, enum: ['pending','processing','shipped','delivered','cancelled'], default: 'pending' },
+  paymentId: { type: String },
+  address:   { type: String },
+}, { timestamps: true });
+
+module.exports = mongoose.model('Order', OrderSchema);
+
+// routes/cart.js
+router.post('/add', auth, async (req, res) => {
+  const { productId, qty = 1 } = req.body;
+  const product = await Product.findById(productId);
+  if (!product) return res.status(404).json({ error: 'Product not found' });
+  if (product.stock < qty) return res.status(400).json({ error: 'Insufficient stock' });
+
+  let cart = await Cart.findOne({ user: req.user.id });
+  if (!cart) cart = new Cart({ user: req.user.id, items: [] });
+
+  const existing = cart.items.find(i => i.product.toString() === productId);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.items.push({ product: productId, name: product.name, price: product.price, qty, image: product.image });
+  }
+  await cart.save();
+  res.json(cart);
+});
+
+// routes/orders.js — Place order + Razorpay
+router.post('/', auth, async (req, res) => {
+  const cart = await Cart.findOne({ user: req.user.id });
+  if (!cart || !cart.items.length) return res.status(400).json({ error: 'Cart is empty' });
+
+  const total = cart.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+  const razorpayOrder = await razorpay.orders.create({
+    amount:   Math.round(total * 100),
+    currency: 'INR',
+    receipt:  \`order_\${Date.now()}\`,
+  });
+
+  const order = await Order.create({
+    user:      req.user.id,
+    items:     cart.items,
+    total,
+    paymentId: razorpayOrder.id,
+    address:   req.body.address,
+  });
+
+  await Cart.deleteOne({ user: req.user.id });
+  res.json({ order, razorpayOrder });
+});`,
+    vivaQA: [
+      { q: 'What is the MERN stack and what does each letter stand for?', a: 'MERN is MongoDB (NoSQL database), Express (Node.js web framework), React (frontend UI library), Node.js (JavaScript runtime). It allows full-stack development entirely in JavaScript, sharing types/logic between frontend and backend.' },
+      { q: 'How does cart management work — should it be stored in the database or browser?', a: 'Storing the cart in MongoDB (linked to user ID) persists it across devices and sessions — the user can add items on mobile and checkout on a laptop. Browser localStorage-only carts are lost when the user logs out or switches devices. A hybrid approach stores in DB for logged-in users and localStorage for guests, merging on login.' },
+      { q: 'What is Razorpay and how does its payment verification work?', a: 'Razorpay is an Indian payment gateway. Flow: (1) Backend creates a Razorpay order with amount. (2) Frontend opens Razorpay checkout modal. (3) On success, Razorpay returns payment_id, order_id, signature. (4) Backend verifies the signature using HMAC-SHA256 to confirm the payment is genuine before marking the order as paid.' },
+      { q: 'How do you handle stock management when multiple users buy the same product simultaneously?', a: 'Use MongoDB\'s atomic $inc operator with a condition: Product.findOneAndUpdate({ _id: id, stock: { $gte: qty } }, { $inc: { stock: -qty } }). The condition ensures stock doesn\'t go negative. If no document is returned, the stock was insufficient and the purchase fails — preventing overselling without locks.' },
+      { q: 'What is the difference between authentication and role-based authorization in this project?', a: 'Authentication confirms who you are (JWT validates the token on every request). Authorization determines what you can do — customers can place orders and view their own orders, but only users with role: "admin" can access product management and see all orders. Middleware checks req.user.role before allowing access to admin routes.' },
+    ],
+  },
+
   // ══════════════════════════════════════════════════════════════════════════
   // SCHOOL PROJECTS (Class 8–12)
   // ══════════════════════════════════════════════════════════════════════════
@@ -1654,6 +1838,434 @@ async def get_result(task_id: str):
       { q: 'What is idempotency and why does it matter in task queues?', a: 'An idempotent operation produces the same result regardless of how many times it is executed. In distributed systems, tasks may be retried due to worker failures, so tasks must be idempotent to avoid side effects (e.g., sending an email twice). Use unique IDs and check-before-execute patterns.' },
       { q: 'What is Docker Compose and why is it useful here?', a: 'Docker Compose defines and runs multi-container applications with a single YAML file. Here we define 4 services: FastAPI, Redis, Celery worker, and Flower. Compose handles networking, startup order, and scaling (--scale worker=4 spawns 4 worker containers) — eliminating "works on my machine" problems.' },
       { q: 'How would you handle task prioritization?', a: 'Celery supports multiple queues with different priorities: route high-priority tasks (e.g., user-facing actions) to a high queue processed by dedicated workers, and low-priority tasks (batch reports) to a low queue. Use route_task to map task types to queues and assign worker queues with -Q high,low flags.' },
+    ],
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // BOOKING / RESERVATION PROJECTS (UG)
+  // ══════════════════════════════════════════════════════════════════════════
+
+  {
+    id: 'hotel-room-booking',
+    level: 'ug',
+    title: 'Hotel Room Booking System',
+    category: 'web',
+    difficulty: 'Intermediate',
+    duration: '3-4 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'JWT', 'Stripe'],
+    summary: 'A full-stack hotel booking platform where guests search available rooms by date, book and pay online, and hotel admins manage reservations and revenue.',
+    description: `Build a production-grade hotel booking system with real-world features: date-range availability search, room filtering by type and price, online payment via Stripe, booking confirmation emails, and an admin panel for property management.
+
+The frontend uses React with a date-picker calendar component. The backend is a Node.js/Express REST API with MongoDB storing rooms, bookings, and users. JWT authentication protects routes, and Stripe handles secure payments.`,
+    steps: [
+      'Design MongoDB schemas: Room, Booking, User',
+      'Build authentication API (register, login, JWT middleware)',
+      'Implement availability search with date-range overlap logic',
+      'Create booking flow: select dates → review → pay via Stripe',
+      'Build admin dashboard: manage rooms, view bookings, revenue chart',
+      'Add booking confirmation with Nodemailer email',
+    ],
+    sourceCode: `// models/Booking.js
+const mongoose = require('mongoose');
+
+const BookingSchema = new mongoose.Schema({
+  room:      { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
+  user:      { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  checkIn:   { type: Date, required: true },
+  checkOut:  { type: Date, required: true },
+  guests:    { type: Number, default: 1 },
+  totalPrice:{ type: Number, required: true },
+  status:    { type: String, enum: ['pending','confirmed','cancelled'], default: 'pending' },
+  paymentId: { type: String },
+}, { timestamps: true });
+
+// Prevent double-booking: index for fast overlap queries
+BookingSchema.index({ room: 1, checkIn: 1, checkOut: 1 });
+module.exports = mongoose.model('Booking', BookingSchema);
+
+// routes/bookings.js — Check availability
+router.get('/available', async (req, res) => {
+  const { checkIn, checkOut, guests } = req.query;
+
+  // Find rooms with NO overlapping confirmed bookings
+  const bookedRoomIds = await Booking.distinct('room', {
+    status: 'confirmed',
+    $or: [
+      { checkIn:  { $lt: new Date(checkOut) },
+        checkOut: { $gt: new Date(checkIn)  } },
+    ],
+  });
+
+  const rooms = await Room.find({
+    _id:      { $nin: bookedRoomIds },
+    capacity: { $gte: Number(guests) },
+  });
+  res.json(rooms);
+});
+
+// routes/bookings.js — Create booking + Stripe payment intent
+router.post('/', auth, async (req, res) => {
+  const { roomId, checkIn, checkOut, guests } = req.body;
+  const room  = await Room.findById(roomId);
+  const nights = Math.ceil(
+    (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24)
+  );
+  const total  = room.pricePerNight * nights;
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: total * 100, // paise/cents
+    currency: 'inr',
+    metadata: { roomId, userId: req.user.id },
+  });
+
+  const booking = await Booking.create({
+    room: roomId, user: req.user.id,
+    checkIn, checkOut, guests, totalPrice: total,
+    paymentId: paymentIntent.id,
+  });
+  res.json({ booking, clientSecret: paymentIntent.client_secret });
+});`,
+    vivaQA: [
+      { q: 'How do you prevent double-booking for the same room?', a: 'Query existing confirmed bookings where the date ranges overlap: a new booking [checkIn, checkOut) conflicts if existing.checkIn < newCheckOut AND existing.checkOut > newCheckIn. Exclude rooms with such conflicts using $nin on the room IDs. Use a database-level unique index or optimistic locking for race condition safety.' },
+      { q: 'What is Stripe and how does its payment flow work?', a: 'Stripe is a payment processing platform. The server creates a PaymentIntent (specifying amount and currency) and returns a client_secret to the frontend. The React frontend uses Stripe.js to collect card details and confirm the payment with the client_secret — card data never touches your server, reducing PCI compliance scope.' },
+      { q: 'What is the difference between $in and $nin in MongoDB?', a: '$in matches documents where a field\'s value is in a given array. $nin matches documents where the value is NOT in the array. We use $nin to exclude rooms that already have confirmed bookings overlapping the requested dates.' },
+      { q: 'How would you handle cancellation and refunds?', a: 'Update the booking status to "cancelled" in the database. For refunds, call stripe.refunds.create({ payment_intent: booking.paymentId }) — Stripe credits the customer. Define a cancellation policy (e.g., full refund if cancelled 48h before check-in, 50% within 24h) enforced at the API level.' },
+      { q: 'What is JWT and how is it used for route protection?', a: 'JSON Web Token is a signed, stateless token issued on login. It encodes the user ID and role. Protected routes run a middleware that verifies the token signature using the secret key and attaches req.user — no database lookup needed per request, making it scalable.' },
+    ],
+  },
+
+  {
+    id: 'bus-ticket-booking',
+    level: 'ug',
+    title: 'Online Bus Ticket Booking System',
+    category: 'web',
+    difficulty: 'Intermediate',
+    duration: '3-4 weeks',
+    tech: ['React', 'Django', 'PostgreSQL', 'REST API', 'Razorpay'],
+    summary: 'Search bus routes by source/destination and date, pick seats on an interactive seat map, book tickets, and download a PDF e-ticket with a QR code.',
+    description: `A real-world bus reservation platform modelled after redBus. Users search available buses between two cities on a chosen date, view seat layouts with available/booked indicators, select seats, provide passenger details, and complete payment via Razorpay.
+
+The backend is Django REST Framework with PostgreSQL managing routes, schedules, seats, and bookings. The seat map is rendered dynamically in React, showing real-time seat status with colour coding.`,
+    steps: [
+      'Design database: Route, Bus, Schedule, Seat, Booking, Passenger',
+      'Build Django REST API for search, seat status, and booking',
+      'Create React seat-selector component (grid layout, colour codes)',
+      'Implement booking flow: seat selection → passenger form → payment',
+      'Generate PDF e-ticket with QR code using ReportLab / pdfkit',
+      'Send booking confirmation SMS via Twilio (optional)',
+    ],
+    sourceCode: `# models.py
+from django.db import models
+
+class Route(models.Model):
+    source      = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    distance_km = models.FloatField()
+
+class Bus(models.Model):
+    TYPES = [('AC Sleeper','AC Sleeper'),('Non-AC Seater','Non-AC Seater'),('Volvo','Volvo')]
+    route       = models.ForeignKey(Route, on_delete=models.CASCADE, related_name='buses')
+    name        = models.CharField(max_length=100)
+    bus_type    = models.CharField(max_length=20, choices=TYPES)
+    total_seats = models.IntegerField(default=40)
+    departure   = models.TimeField()
+    arrival     = models.TimeField()
+    price       = models.DecimalField(max_digits=8, decimal_places=2)
+
+class Booking(models.Model):
+    STATUS = [('pending','Pending'),('confirmed','Confirmed'),('cancelled','Cancelled')]
+    user         = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    bus          = models.ForeignKey(Bus, on_delete=models.CASCADE)
+    travel_date  = models.DateField()
+    seats        = models.JSONField()      # e.g. ["A1","A2","B3"]
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status       = models.CharField(max_length=15, choices=STATUS, default='pending')
+    pnr          = models.CharField(max_length=12, unique=True)
+    booked_at    = models.DateTimeField(auto_now_add=True)
+
+# views.py — seat availability
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET'])
+def seat_status(request, bus_id, travel_date):
+    booked = Booking.objects.filter(
+        bus_id=bus_id, travel_date=travel_date, status='confirmed'
+    ).values_list('seats', flat=True)
+
+    booked_seats = set()
+    for seat_list in booked:
+        booked_seats.update(seat_list)
+
+    bus = Bus.objects.get(pk=bus_id)
+    all_seats = [f"{row}{col}" for row in 'ABCDE' for col in range(1, 9)]
+
+    return Response({
+        'total': bus.total_seats,
+        'booked': list(booked_seats),
+        'available': [s for s in all_seats if s not in booked_seats],
+    })`,
+    vivaQA: [
+      { q: 'How do you prevent two users from booking the same seat simultaneously?', a: 'Use database-level locking: wrap the seat check and booking creation in a SELECT FOR UPDATE (PostgreSQL row-level lock) within a transaction. Django ORM: Booking.objects.select_for_update().filter(...). This blocks concurrent transactions from reading the same seats until the first transaction commits.' },
+      { q: 'What is a PNR number and how would you generate it?', a: 'PNR (Passenger Name Record) is a unique booking identifier. Generate it by combining a prefix, date, and random alphanumeric characters: e.g., import secrets; pnr = "BUS" + datetime.now().strftime("%m%d") + secrets.token_hex(3).upper(). Ensure uniqueness with a UNIQUE database constraint.' },
+      { q: 'How does Django REST Framework differ from plain Django?', a: 'Plain Django renders HTML templates (server-side rendering). Django REST Framework (DRF) builds JSON APIs consumed by any frontend (React, mobile). DRF provides Serializers (schema + validation), ViewSets (CRUD in fewer lines), and authentication classes (JWT, Session, Token).' },
+      { q: 'What is JSONField in Django and when should you use it?', a: 'JSONField stores Python dicts or lists as JSON in the database (PostgreSQL native JSONB, SQLite as text). Use it for flexible, schema-less data — like a list of selected seat codes — that doesn\'t need to be queried field by field. Avoid it for data you need to filter or aggregate by individual properties.' },
+      { q: 'How would you implement a ticket cancellation and refund policy?', a: 'Define time-based refund tiers: >24h before departure = 80% refund, 12–24h = 50%, <12h = 0%. Implement a cancel endpoint that checks remaining time, calculates refund, updates booking status to "cancelled", initiates Razorpay refund via API, and releases the seats (removes from booked list).' },
+    ],
+  },
+
+  {
+    id: 'doctor-appointment-booking',
+    level: 'ug',
+    title: 'Doctor Appointment Booking System',
+    category: 'web',
+    difficulty: 'Intermediate',
+    duration: '3-4 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Nodemailer', 'JWT'],
+    summary: 'Patients search doctors by specialization and location, view available time slots, book appointments, and receive email reminders — all managed through a clinic dashboard.',
+    description: `A healthcare appointment management system used in clinics and hospitals. Patients register, browse doctors by specialty (Cardiologist, Dentist, Dermatologist, etc.), view their weekly availability calendar, and book 30-minute slots. Doctors get a dashboard showing their daily appointments.
+
+The system sends automated email reminders 24 hours before appointments using Nodemailer + node-cron, and supports appointment rescheduling and cancellation.`,
+    steps: [
+      'Design schemas: Doctor, Patient, Appointment, Schedule',
+      'Build authentication for both patient and doctor roles',
+      'Implement weekly slot generation from doctor availability rules',
+      'Create booking API with conflict detection',
+      'Build patient search + booking UI and doctor dashboard',
+      'Set up cron job for automated 24h email reminders',
+    ],
+    sourceCode: `// models/Doctor.js
+const mongoose = require('mongoose');
+
+const AvailabilitySchema = new mongoose.Schema({
+  dayOfWeek:  { type: Number, min: 0, max: 6 }, // 0=Sun, 6=Sat
+  startTime:  { type: String },  // "09:00"
+  endTime:    { type: String },  // "17:00"
+  slotMinutes:{ type: Number, default: 30 },
+});
+
+const DoctorSchema = new mongoose.Schema({
+  name:         { type: String, required: true },
+  specialization:{ type: String, required: true },
+  experience:   { type: Number },
+  fee:          { type: Number },
+  availability: [AvailabilitySchema],
+  userId:       { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+});
+module.exports = mongoose.model('Doctor', DoctorSchema);
+
+// utils/slotGenerator.js
+function generateSlots(availability, date) {
+  const day    = new Date(date).getDay();
+  const avail  = availability.find(a => a.dayOfWeek === day);
+  if (!avail) return [];
+
+  const slots  = [];
+  const [sh, sm] = avail.startTime.split(':').map(Number);
+  const [eh, em] = avail.endTime.split(':').map(Number);
+  let   current  = sh * 60 + sm;
+  const end      = eh * 60 + em;
+
+  while (current + avail.slotMinutes <= end) {
+    const hh = String(Math.floor(current / 60)).padStart(2, '0');
+    const mm = String(current % 60).padStart(2, '0');
+    slots.push(\`\${hh}:\${mm}\`);
+    current += avail.slotMinutes;
+  }
+  return slots;
+}
+
+// routes/appointments.js — Get available slots
+router.get('/slots/:doctorId', async (req, res) => {
+  const { date } = req.query;
+  const doctor   = await Doctor.findById(req.params.doctorId);
+  const allSlots = generateSlots(doctor.availability, date);
+
+  const booked   = await Appointment.find({
+    doctor: req.params.doctorId,
+    date,
+    status: { $ne: 'cancelled' },
+  }).select('time');
+
+  const bookedTimes = booked.map(a => a.time);
+  const available   = allSlots.filter(s => !bookedTimes.includes(s));
+  res.json({ available, booked: bookedTimes });
+});`,
+    vivaQA: [
+      { q: 'How do you generate time slots dynamically from a doctor\'s availability?', a: 'Store the doctor\'s availability as rules (day of week, start time, end time, slot duration in minutes). On a given date, find the matching day rule, then iterate from start to end time, adding slot-duration minutes each iteration, producing an array of slot strings like "09:00", "09:30", etc.' },
+      { q: 'How do you send automated appointment reminders?', a: 'Use node-cron to schedule a job (e.g., cron.schedule("0 8 * * *")) that runs daily at 8 AM. The job queries appointments scheduled for the next day, fetches patient email addresses, and sends reminder emails via Nodemailer with appointment details and a cancellation link.' },
+      { q: 'What is role-based access control (RBAC) and how is it implemented here?', a: 'RBAC restricts API access based on the user\'s role (patient, doctor, admin). During login, the role is embedded in the JWT payload. Middleware checks req.user.role before allowing access to protected routes — patients can book appointments, doctors can view their schedules, admins can manage the system.' },
+      { q: 'What is mongoose populate() and when is it used?', a: 'populate() replaces a stored ObjectId reference with the actual document from the referenced collection. For example, Appointment.find().populate("doctor") replaces the doctor field (an ObjectId) with the full Doctor document. It is similar to a JOIN in SQL.' },
+      { q: 'How would you add video consultation support to this system?', a: 'Integrate a WebRTC library (Daily.co, Agora, or Jitsi) or a video API. When a confirmed appointment starts, generate a unique room URL and share it via email/SMS with both doctor and patient. WebRTC provides peer-to-peer encrypted video — no media passes through your server, reducing infrastructure cost.' },
+    ],
+  },
+
+  {
+    id: 'movie-ticket-booking',
+    level: 'ug',
+    title: 'Movie Ticket Booking App',
+    category: 'web',
+    difficulty: 'Intermediate',
+    duration: '3-4 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MySQL', 'Sequelize', 'Razorpay'],
+    summary: 'A BookMyShow-style app where users browse movies and showtimes, pick seats on a theatre seat map, pay, and receive a QR-code ticket.',
+    description: `A cinema booking platform inspired by BookMyShow. Users browse now-showing movies, select a multiplex, choose a showtime, pick seats on a colour-coded seat map (gold, silver, recliner tiers), and complete payment. A QR-code ticket is generated for entry.
+
+The backend uses Node.js with Sequelize ORM on MySQL. Real-time seat locking (seats are held for 5 minutes during checkout to prevent double-booking) is implemented with Redis TTL keys.`,
+    steps: [
+      'Design database: Movie, Theatre, Screen, Show, Seat, Booking',
+      'Build REST API with Sequelize for movies, shows, and seats',
+      'Create interactive seat map in React (tiers + live status)',
+      'Implement Redis-based temporary seat locking (5-min TTL)',
+      'Integrate Razorpay payment and generate QR code ticket',
+      'Add admin panel to manage movies and shows',
+    ],
+    sourceCode: `// models/Show.js (Sequelize)
+const { DataTypes } = require('sequelize');
+module.exports = (sequelize) => sequelize.define('Show', {
+  movieId:    { type: DataTypes.INTEGER, allowNull: false },
+  screenId:   { type: DataTypes.INTEGER, allowNull: false },
+  showDate:   { type: DataTypes.DATEONLY, allowNull: false },
+  showTime:   { type: DataTypes.TIME, allowNull: false },
+  language:   { type: DataTypes.STRING, defaultValue: 'English' },
+  format:     { type: DataTypes.ENUM('2D','3D','IMAX'), defaultValue: '2D' },
+  isActive:   { type: DataTypes.BOOLEAN, defaultValue: true },
+});
+
+// Seat locking with Redis (5-minute hold)
+const redis = require('../config/redis');
+
+async function lockSeats(showId, seatIds, userId) {
+  const pipeline = redis.pipeline();
+  for (const seatId of seatIds) {
+    const key = \`lock:\${showId}:\${seatId}\`;
+    const existing = await redis.get(key);
+    if (existing && existing !== userId) {
+      throw new Error(\`Seat \${seatId} is being booked by another user\`);
+    }
+    pipeline.set(key, userId, 'EX', 300); // 5-minute TTL
+  }
+  await pipeline.exec();
+}
+
+async function releaseLocks(showId, seatIds) {
+  const keys = seatIds.map(id => \`lock:\${showId}:\${id}\`);
+  await redis.del(...keys);
+}
+
+// routes/bookings.js
+router.post('/lock', auth, async (req, res) => {
+  const { showId, seatIds } = req.body;
+  try {
+    await lockSeats(showId, seatIds, req.user.id);
+    res.json({ locked: true, expiresIn: 300 });
+  } catch (err) {
+    res.status(409).json({ error: err.message });
+  }
+});`,
+    vivaQA: [
+      { q: 'How does temporary seat locking prevent double-booking during checkout?', a: 'When a user selects seats, a Redis key per seat (lock:showId:seatId) is set with a 5-minute TTL and their user ID. Any concurrent request for the same seat checks for this key — if it exists with a different user ID, the request is rejected (409 Conflict). The lock auto-expires if payment isn\'t completed, releasing the seats.' },
+      { q: 'What is Sequelize and how does it differ from Mongoose?', a: 'Sequelize is an ORM for relational databases (MySQL, PostgreSQL, SQLite). It uses tables, foreign keys, and SQL under the hood. Mongoose is an ODM for MongoDB (NoSQL). Sequelize enforces strict schemas and relations; Mongoose allows flexible, schema-less documents. Use Sequelize when data relationships are complex and transactional integrity matters.' },
+      { q: 'What is a database transaction and why is it needed for ticket booking?', a: 'A transaction groups multiple database operations that must all succeed or all fail together (ACID properties). For ticket booking: (1) lock seats, (2) create booking record, (3) update seat status, (4) process payment. If step 4 fails, steps 1–3 must be rolled back to avoid selling seats without payment.' },
+      { q: 'What is a Redis TTL and why is it used instead of a database timer?', a: 'TTL (Time to Live) is a Redis feature that automatically deletes a key after a specified number of seconds. It is used instead of a database cron job because: Redis operates in memory (microsecond latency), TTL deletion is atomic and guaranteed, and it avoids polling overhead. Perfect for short-lived lock states.' },
+      { q: 'How would you generate and validate QR code tickets?', a: 'Generate a ticket token: JWT or HMAC-SHA256 of (bookingId + userId + showId). Store the token hash in the database. Generate a QR code image from the token using the qrcode library. At the venue, scan the QR, decode the token, verify the hash matches the database record, and mark the ticket as used to prevent reuse.' },
+    ],
+  },
+
+  {
+    id: 'restaurant-reservation',
+    level: 'ug',
+    title: 'Restaurant Table Reservation System',
+    category: 'web',
+    difficulty: 'Beginner',
+    duration: '2-3 weeks',
+    tech: ['React', 'Node.js', 'Express', 'MongoDB', 'Nodemailer'],
+    summary: 'Customers browse the menu, reserve a table for a specific date/time and party size, and get a confirmation email — while restaurant staff manage bookings from a dashboard.',
+    description: `A complete restaurant reservation web app where customers can view the restaurant menu, check table availability, book a table for a specific date, time, and party size, and instantly receive a booking confirmation via email.
+
+The restaurant staff dashboard shows all reservations, allows walk-in table assignment, and lets staff update booking status (seated, completed, no-show). The project demonstrates full-stack MERN development with a clean, practical use case perfect for a final year project.`,
+    steps: [
+      'Set up MongoDB schemas: Table, Reservation, MenuItem',
+      'Build availability API (check if tables free for date/time/party)',
+      'Create customer booking form (date picker, time, party size)',
+      'Send confirmation email with booking details via Nodemailer',
+      'Build staff dashboard for managing reservations',
+      'Add reservation cancellation with email notification',
+    ],
+    sourceCode: `// models/Reservation.js
+const mongoose = require('mongoose');
+
+const ReservationSchema = new mongoose.Schema({
+  customer: {
+    name:  { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+  },
+  table:       { type: mongoose.Schema.Types.ObjectId, ref: 'Table' },
+  date:        { type: Date, required: true },
+  time:        { type: String, required: true },   // "19:30"
+  partySize:   { type: Number, required: true },
+  specialNote: { type: String },
+  status:      {
+    type: String,
+    enum: ['confirmed','seated','completed','cancelled','no-show'],
+    default: 'confirmed'
+  },
+  confirmCode: { type: String, unique: true },
+}, { timestamps: true });
+module.exports = mongoose.model('Reservation', ReservationSchema);
+
+// routes/reservations.js
+const nodemailer = require('nodemailer');
+const crypto     = require('crypto');
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+});
+
+router.post('/', async (req, res) => {
+  const { customerName, email, phone, date, time, partySize, note } = req.body;
+
+  // Find an available table
+  const bookedTables = await Reservation.distinct('table', {
+    date: new Date(date), time, status: { $ne: 'cancelled' }
+  });
+
+  const table = await Table.findOne({
+    _id:      { $nin: bookedTables },
+    capacity: { $gte: partySize },
+  }).sort('capacity');
+
+  if (!table) return res.status(400).json({ error: 'No tables available for this time slot.' });
+
+  const confirmCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+
+  const reservation = await Reservation.create({
+    customer: { name: customerName, email, phone },
+    table: table._id, date, time, partySize,
+    specialNote: note, confirmCode,
+  });
+
+  await transporter.sendMail({
+    from: '"The Restaurant" <noreply@restaurant.com>',
+    to:   email,
+    subject: \`Reservation Confirmed — \${confirmCode}\`,
+    html: \`<h2>Hi \${customerName}!</h2>
+           <p>Your table for <b>\${partySize}</b> is confirmed for
+           <b>\${new Date(date).toDateString()}</b> at <b>\${time}</b>.</p>
+           <p>Confirmation Code: <b>\${confirmCode}</b></p>
+           <p>To cancel: reply to this email or call us.</p>\`,
+  });
+
+  res.status(201).json({ reservation, confirmCode });
+});`,
+    vivaQA: [
+      { q: 'How do you check table availability for a given time slot?', a: 'Query the Reservation collection for all non-cancelled bookings on the same date and time to get a list of booked table IDs. Then query the Table collection for tables NOT in that list whose capacity is >= the requested party size. Sort by capacity ascending to assign the smallest fitting table (efficient use of tables).' },
+      { q: 'What is Nodemailer and how does it send emails?', a: 'Nodemailer is a Node.js library for sending emails. It connects to an SMTP server (Gmail, SendGrid, AWS SES) using credentials, composes an email (from, to, subject, html body), and delivers it. For production, use an email service like SendGrid rather than Gmail (which has low send limits and security restrictions).' },
+      { q: 'What is crypto.randomBytes() and why use it for confirmation codes?', a: 'crypto.randomBytes(n) generates n cryptographically random bytes from the OS entropy source. Converting to hex gives a random string. It\'s used for confirmation codes because it\'s unpredictable (unlike Math.random()), preventing customers from guessing others\' codes to cancel or manipulate their reservations.' },
+      { q: 'How would you handle time zones for reservations?', a: 'Store all datetimes in UTC in MongoDB. Accept reservation time as a combination of a local date and time string plus the restaurant\'s timezone (e.g., "Asia/Kolkata"). Convert to UTC before storing using a library like Luxon or date-fns-tz. Display times in the customer\'s local timezone on the frontend using the Intl.DateTimeFormat API.' },
+      { q: 'What additional features would make this production-ready?', a: 'SMS confirmation via Twilio, Google Calendar integration, a floor map for drag-and-drop table assignment, waitlist management for fully-booked slots, analytics dashboard (occupancy rate, peak hours, no-show rate), online menu ordering integration, and POS system integration.' },
     ],
   },
 

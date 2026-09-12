@@ -11,6 +11,7 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
+import NotFound from './pages/NotFound'
 import VivaMockTest from './pages/VivaMockTest'
 import ProjectFit from './pages/ProjectFit'
 import InternalMarksEstimator from './pages/InternalMarksEstimator'
@@ -46,7 +47,7 @@ export default function App() {
           <Route path="/contact"                 element={<Contact />} />
           <Route path="/pricing"                 element={<Pricing />} />
           <Route path="/login"                   element={<Login />} />
-          <Route path="*"                        element={<Projects />} />
+          <Route path="*"                        element={<NotFound />} />
         </Routes>
       </main>
       <Footer />
