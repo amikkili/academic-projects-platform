@@ -434,19 +434,13 @@ export default function InterviewReadiness() {
   if (phase === 'intro') {
     return (
       <div className="min-h-screen bg-slate-50">
-        <div className="hero-bg py-16 pt-28">
+        <div className="hero-bg py-10 pt-20">
           <div className="max-w-2xl mx-auto px-4 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-brand-orange/20 border border-brand-orange/30 flex items-center justify-center mx-auto mb-5">
-              <Target size={30} className="text-brand-orange" />
-            </div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-5">
-              <Zap size={14} fill="currentColor" /> Interview Readiness Score
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-              How Ready Are You<br className="hidden sm:block" /> for Your Interview?
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+              How Ready Are You for Your Interview?
             </h1>
-            <p className="text-white/70 text-base sm:text-lg leading-relaxed">
-              A 20-question self-assessment across project knowledge, coding, CS fundamentals, communication, and resume — with a personalised readiness score and action plan.
+            <p className="text-white/70 text-sm leading-relaxed">
+              20-question self-assessment — project knowledge, coding, CS fundamentals, communication, and resume.
             </p>
           </div>
         </div>

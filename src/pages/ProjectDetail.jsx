@@ -5,19 +5,22 @@ import {
   ChevronDown, ChevronUp, Copy, Check, Zap, Briefcase,
   MessageCircle, Download, Video, Package, MonitorPlay,
   FileText, Wrench, AlertCircle, ExternalLink, Star, Layers,
-  Rocket, Globe, Info, Github,
+  Rocket, Globe, Info, Github, Lock,
 } from 'lucide-react'
 import { projects, categories, difficultyColors } from '../data/projects'
 import { vivaMCQ } from '../data/vivaMCQ'
 import { projectMeta, WHATSAPP } from '../data/projectMeta'
 import { API_BASE } from '../lib/api'
+import { useAuth } from '../context/AuthContext'
+import { useAccess } from '../context/AccessContext'
+import FeatureGate from '../components/FeatureGate'
 
 const TABS = [
-  { id: 'overview', label: 'Overview',    icon: BookOpen },
-  { id: 'setup',    label: 'Setup Guide', icon: Wrench },
-  { id: 'code',     label: 'Source Code', icon: Code2 },
-  { id: 'deploy',   label: 'Deploy',      icon: Rocket },
-  { id: 'viva',     label: 'Viva Q&A',   icon: Mic2 },
+  { id: 'overview', label: 'Overview',    icon: BookOpen                },
+  { id: 'setup',    label: 'Setup Guide', icon: Wrench,  premium: true  },
+  { id: 'code',     label: 'Source Code', icon: Code2,   premium: true  },
+  { id: 'deploy',   label: 'Deploy',      icon: Rocket,  premium: true  },
+  { id: 'viva',     label: 'Viva Q&A',   icon: Mic2                    },
 ]
 
 // ── What's included items ─────────────────────────────────────────────────────
@@ -271,6 +274,10 @@ export default function ProjectDetail() {
   const meta      = projectMeta[id] || {}
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'overview')
 
+  const { isLoggedIn }  = useAuth()
+  const { hasAccess }   = useAccess()
+  const hasProjectAccess = isLoggedIn && hasAccess(id)
+
   // Viva generator state
   const [vivaGenDifficulty, setVivaGenDifficulty] = useState('easy')
   const [vivaGenCount,      setVivaGenCount]      = useState(8)
@@ -427,21 +434,56 @@ export default function ProjectDetail() {
         </div>
       </div>
 
-      {/* ── Tab bar ── */}
+      {/* ── Project Brief (description + screenshots, always visible above tabs) ── */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-2 space-y-6">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
+          <h2 className="text-base font-bold text-brand-navy mb-2 flex items-center gap-2">
+            <Info size={16} className="text-brand-orange" /> About This Project
+          </h2>
+          <p className="text-slate-600 text-sm leading-relaxed">
+            {description.split('\n\n')[0]}
+          </p>
+        </div>
+        {screenshots && screenshots.length > 0 && (
+          <ScreenshotGallery screenshots={screenshots} />
+        )}
+      </div>
+
+      {/* ── Tab selector (dropdown) ── */}
       <div className="sticky top-[60px] z-30 bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-1 py-2 overflow-x-auto scrollbar-none">
-            {TABS.map(({ id: tid, label, icon: Icon }) => (
-              <button
-                key={tid}
-                onClick={() => setActiveTab(tid)}
-                className={`tab-btn flex items-center gap-2 whitespace-nowrap flex-shrink-0 ${
-                  activeTab === tid ? 'tab-btn-active' : 'tab-btn-inactive'
-                }`}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex-shrink-0">Section</span>
+            <div className="relative">
+              <select
+                value={activeTab}
+                onChange={e => setActiveTab(e.target.value)}
+                className="appearance-none pl-4 pr-9 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-orange/30 focus:border-brand-orange cursor-pointer"
               >
-                <Icon size={15} /> {label}
-              </button>
-            ))}
+                {TABS.map(({ id: tid, label, premium }) => (
+                  <option key={tid} value={tid}>
+                    {label}{premium && !hasProjectAccess ? ' 🔒' : ''}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            </div>
+            <div className="hidden sm:flex items-center gap-1.5 flex-wrap">
+              {TABS.map(({ id: tid, label, icon: Icon, premium }) => (
+                <button
+                  key={tid}
+                  onClick={() => setActiveTab(tid)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    activeTab === tid
+                      ? 'bg-brand-navy text-white shadow-sm'
+                      : 'text-slate-500 hover:text-brand-navy hover:bg-slate-100'
+                  }`}
+                >
+                  <Icon size={12} /> {label}
+                  {premium && !hasProjectAccess && <Lock size={9} className="opacity-50" />}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -488,9 +530,6 @@ export default function ProjectDetail() {
                   </span>
                 </button>
               </div>
-
-              {/* Screenshot gallery */}
-              <ScreenshotGallery screenshots={screenshots} />
 
               {/* Description */}
               <div className="bg-white rounded-2xl border border-slate-100 p-7">
@@ -589,6 +628,7 @@ export default function ProjectDetail() {
 
         {/* ── Setup Guide ── */}
         {activeTab === 'setup' && (
+          <FeatureGate projectId={id} feature="the Setup Guide">
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
 
@@ -740,10 +780,12 @@ export default function ProjectDetail() {
               </div>
             </div>
           </div>
+          </FeatureGate>
         )}
 
         {/* ── Source Code ── */}
         {activeTab === 'code' && (
+          <FeatureGate projectId={id} feature="the Source Code">
           <div className="space-y-6">
 
             {/* ── GitHub Repo + ZIP download ── */}
@@ -905,10 +947,12 @@ export default function ProjectDetail() {
               </div>
             </div>
           </div>
+          </FeatureGate>
         )}
 
         {/* ── Deploy ── */}
         {activeTab === 'deploy' && (
+          <FeatureGate projectId={id} feature="the Deploy Guide">
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
 
@@ -1035,6 +1079,7 @@ export default function ProjectDetail() {
               </div>
             </div>
           </div>
+          </FeatureGate>
         )}
 
         {/* ── Viva Q&A ── */}

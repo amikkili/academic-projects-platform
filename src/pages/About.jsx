@@ -11,14 +11,13 @@ export default function About() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <div className="hero-bg py-28 text-center">
+      <div className="hero-bg py-10 pt-20 text-center">
         <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-5">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
             About <span className="gradient-text">AcademiCode</span>
           </h1>
-          <p className="text-white/70 text-lg leading-relaxed">
-            We're on a mission to make academic project work less stressful and more rewarding
-            for engineering students across India.
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
+            We're on a mission to make academic project work less stressful and more rewarding for engineering students across India.
           </p>
         </div>
       </div>
@@ -113,16 +112,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 hero-bg text-center">
-        <div className="max-w-2xl mx-auto px-4">
-          <h2 className="text-3xl font-extrabold text-white mb-4">Start Learning Today</h2>
-          <p className="text-white/70 mb-7">All projects are free to explore. No sign-up required.</p>
-          <Link to="/projects" className="btn-primary">
-            View All Projects <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
     </div>
   )
 }

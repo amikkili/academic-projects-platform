@@ -367,10 +367,7 @@ export default function ProjectInterview() {
           <Link to={`/projects/${id}`} className="inline-flex items-center gap-2 text-white/60 hover:text-white text-sm mb-5 transition">
             <ArrowLeft size={15} /> Back to {title}
           </Link>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/20 border border-purple-400/30 text-purple-200 text-xs font-semibold mb-4">
-            <Briefcase size={12} /> Interview Prep Mode
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">
             Project Interview Prep
           </h1>
           <p className="text-white/70 text-base leading-relaxed max-w-2xl">

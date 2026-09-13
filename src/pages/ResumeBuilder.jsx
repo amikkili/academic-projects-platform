@@ -402,16 +402,13 @@ export default function ResumeBuilder() {
       </div>
 
       {/* Hero */}
-      <div className="hero-bg py-14 pt-24">
+      <div className="hero-bg py-10 pt-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-5">
-            <FileText size={14} /> Resume Bullet Generator
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-            Turn Your Work Into<br className="hidden sm:block" /> Resume Gold
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+            Turn Your Work Into Resume Gold
           </h1>
-          <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-            For freshers and experienced engineers alike — fill in your project details and get polished, quantified resume bullets ready to paste into your CV or LinkedIn.
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
+            Fill in your project details and get polished, quantified resume bullets ready to paste into your CV or LinkedIn.
           </p>
 
           {/* Mode toggle */}

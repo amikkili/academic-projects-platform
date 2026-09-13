@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Check, Zap, BookOpen, Code2, FileDown, Rocket, Phone, Star, Lock, Shield, AlertCircle } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { Check, Zap, BookOpen, Code2, FileDown, Rocket, Phone, Star, Lock, ShoppingCart, Unlock, Repeat2, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useAccess } from '../context/AccessContext'
 import { usePayment } from '../hooks/usePayment'
@@ -75,6 +75,10 @@ export default function Pricing() {
   const { has_all, project_ids, refresh } = useAccess()
   const [selectedProject, setSelectedProject] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
+  const location = useLocation()
+  const highlightPlan = location.state?.highlight || null
+
+  const [openFaq, setOpenFaq] = useState(null)
 
   const { pay, loading, error } = usePayment({
     token,
@@ -102,17 +106,12 @@ export default function Pricing() {
     <div className="min-h-screen bg-slate-50">
 
       {/* Hero */}
-      <div className="hero-bg py-20 pt-28">
+      <div className="hero-bg py-10 pt-20">
         <div className="w-full px-5 lg:px-10 text-center">
-          {/* TEST MODE banner */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-xs font-semibold mb-5">
-            <AlertCircle size={13} />
-            TEST MODE — No real charges · Use test card 4111 1111 1111 1111 · OTP: 1234
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
             Simple, Honest Pricing
           </h1>
-          <p className="text-white/65 text-lg max-w-lg mx-auto">
+          <p className="text-white/65 text-sm max-w-lg mx-auto">
             Pay once. No subscriptions. Unlock what you need for your viva.
           </p>
         </div>
@@ -135,9 +134,12 @@ export default function Pricing() {
             const alreadyHasSingle = plan.id === 'single' && selectedProject && project_ids.includes(selectedProject)
             const isPurchased      = plan.id === 'all' ? alreadyHasAll : (plan.id === 'free' ? true : alreadyHasSingle)
 
+            const isHighlighted = highlightPlan === plan.id
             return (
               <div key={plan.id}
-                className={`relative bg-white rounded-2xl border-2 ${plan.color} p-7 flex flex-col shadow-sm`}
+                className={`relative bg-white rounded-2xl border-2 ${plan.color} p-7 flex flex-col shadow-sm transition-all ${
+                  isHighlighted ? 'ring-4 ring-brand-orange scale-[1.02]' : ''
+                }`}
               >
                 {plan.badge && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-0.5 bg-brand-navy text-white text-xs font-bold rounded-full">
@@ -218,44 +220,61 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Test card info */}
-        <div className="max-w-2xl mx-auto bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-14">
-          <p className="font-bold text-yellow-800 text-sm mb-3 flex items-center gap-2">
-            <AlertCircle size={16} /> Test Mode — Sample Transaction Details
-          </p>
-          <div className="grid sm:grid-cols-2 gap-3 text-sm">
+        {/* How it works */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <h2 className="text-xl font-extrabold text-brand-navy text-center mb-2">How It Works</h2>
+          <p className="text-slate-400 text-sm text-center mb-8">Three steps, no surprises.</p>
+          <div className="grid sm:grid-cols-3 gap-5">
             {[
-              ['Card Number', '4111 1111 1111 1111'],
-              ['Expiry',      'Any future date (e.g. 12/26)'],
-              ['CVV',         'Any 3 digits (e.g. 123)'],
-              ['OTP',         '1234'],
-              ['UPI',         'success@razorpay'],
-              ['Net Banking', 'Any bank → use test credentials'],
-            ].map(([k, v]) => (
-              <div key={k} className="flex gap-2">
-                <span className="text-yellow-700 font-semibold w-28 flex-shrink-0">{k}:</span>
-                <span className="font-mono text-yellow-900">{v}</span>
+              { icon: ShoppingCart, num: '01', title: 'Choose a Plan',    desc: 'Pick a single project you need, or unlock all 8 at once with the best-value plan.'    },
+              { icon: Unlock,       num: '02', title: 'Pay Once',         desc: 'One-time payment via Razorpay. No subscriptions, no renewals, no hidden charges.'       },
+              { icon: Repeat2,      num: '03', title: 'Access Forever',   desc: 'Your project is unlocked permanently — setup guide, source code, deploy guide and PPT.' },
+            ].map(({ icon: Icon, num, title, desc }) => (
+              <div key={num} className="bg-white rounded-3xl border border-slate-100 shadow-sm p-7 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-2xl bg-brand-orange/10 flex items-center justify-center flex-shrink-0">
+                    <Icon size={20} className="text-brand-orange" />
+                  </div>
+                  <span className="text-3xl font-black text-slate-100 leading-none">{num}</span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-brand-navy text-base mb-1">{title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Trust strip */}
-        <div className="max-w-3xl mx-auto grid sm:grid-cols-3 gap-6 text-center">
-          {[
-            { icon: Shield, title: 'Secure Payments',  sub: 'Powered by Razorpay — India\'s #1 payment gateway' },
-            { icon: Check,  title: 'One-Time Payment', sub: 'No subscriptions. Pay once, access forever.' },
-            { icon: Phone,  title: 'WhatsApp Support', sub: 'Any issue? Message us and we\'ll resolve it instantly.' },
-          ].map(({ icon: Icon, title, sub }) => (
-            <div key={title} className="flex flex-col items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-brand-navy/8 flex items-center justify-center">
-                <Icon size={18} className="text-brand-navy" />
+        {/* FAQ */}
+        <div className="max-w-3xl mx-auto mb-4">
+          <h2 className="text-xl font-extrabold text-brand-navy text-center mb-2">Common Questions</h2>
+          <p className="text-slate-400 text-sm text-center mb-8">Everything you need to know before buying.</p>
+          <div className="space-y-3">
+            {[
+              { q: 'Do I need to pay again if the project is updated?',        a: 'No. Once you unlock a project, all future updates are included at no extra cost.' },
+              { q: 'Can I switch from Single to All Projects later?',          a: 'Yes — you can upgrade anytime. The ₹499 you already paid is not deducted, but you get full access to every project once you purchase the All Projects plan.' },
+              { q: 'Is the source code downloadable or just viewable online?', a: 'Both. You get a GitHub repo link and a direct .zip download inside the Source Code tab of the project page.' },
+              { q: 'What if I need help after purchasing?',                    a: 'Reach out on email or phone (see the Contact page). For All Projects plan holders, you get priority on-call support.' },
+            ].map(({ q, a }, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full flex items-center justify-between px-6 py-4 text-left"
+                >
+                  <span className="font-semibold text-slate-800 text-sm pr-4">{q}</span>
+                  <ChevronDown size={16} className={`text-slate-400 flex-shrink-0 transition-transform duration-200 ${openFaq === i ? 'rotate-180' : ''}`} />
+                </button>
+                {openFaq === i && (
+                  <div className="px-6 pb-4 text-slate-500 text-sm leading-relaxed border-t border-slate-50 pt-3">
+                    {a}
+                  </div>
+                )}
               </div>
-              <p className="font-semibold text-slate-800 text-sm">{title}</p>
-              <p className="text-slate-400 text-xs leading-relaxed">{sub}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
       </div>
     </div>
   )

@@ -214,17 +214,13 @@ export default function ProjectFit() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className="hero-bg py-20 pt-28">
+      <div className="hero-bg py-10 pt-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-5">
-            <Zap size={14} fill="currentColor" /> Project Fit Recommender
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-            Find the Perfect Project<br />for Your Skill Set
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2">
+            Find the Perfect Project for Your Skill Set
           </h1>
-          <p className="text-white/70 text-lg">
-            Select the technologies and concepts you already know.
-            We'll rank every project by how well it matches — and show you exactly what you'd need to learn.
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
+            Select the technologies you know — we'll rank every project by how well it matches.
           </p>
         </div>
       </div>

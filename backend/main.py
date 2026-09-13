@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database.db import engine
 from .database.models import Base
-from .api import marks, resume, viva, ppt, payments, stats
+from .api import marks, resume, viva, ppt, payments, stats, company_exam
 
 Base.metadata.create_all(bind=engine)
 
@@ -29,7 +29,8 @@ app.include_router(resume.router,   prefix="/api")
 app.include_router(viva.router,     prefix="/api")
 app.include_router(ppt.router,      prefix="/api")
 app.include_router(payments.router, prefix="/api")
-app.include_router(stats.router,    prefix="/api")
+app.include_router(stats.router,         prefix="/api")
+app.include_router(company_exam.router,  prefix="/api")
 
 
 @app.get("/api/health")

@@ -2,17 +2,117 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { Code2, Menu, X, LogIn, LogOut, ChevronDown } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { levels, categories, projects } from '../data/projects'
+
+// ── Project mega-dropdown data — level-specific ──────────────────────────────
+
+const CATEGORY_BASE = [
+  { id: 'ml',       icon: '🤖', label: 'Machine Learning' },
+  { id: 'web',      icon: '🌐', label: 'Web Development'  },
+  { id: 'data',     icon: '📊', label: 'Data Science'     },
+  { id: 'iot',      icon: '📡', label: 'IoT & Embedded'   },
+  { id: 'security', icon: '🔐', label: 'Cybersecurity'    },
+  { id: 'mobile',   icon: '📱', label: 'Mobile Apps'      },
+]
+
+// Topics are curated to match the complexity and context of each level
+const LEVEL_TOPICS = {
+  school: {
+    ml:       ['Teachable Machine (No-Code)', 'Rule-Based Chatbot', 'Spam SMS Detector', 'Grade Predictor'],
+    web:      ['HTML/CSS Portfolio', 'To-Do App', 'Interactive Quiz', 'Weather App', 'QR Code Generator'],
+    data:     ['Class Marks Chart', 'Survey Analysis', 'Bar & Pie Charts with Matplotlib'],
+    iot:      ['LED & Traffic Light (Arduino)', 'Temp & Humidity Sensor', 'Soil Moisture Meter', 'Obstacle Detector'],
+    security: ['Caesar Cipher Encoder', 'Password Strength Checker', 'Login Attempt Monitor'],
+    mobile:   ['Unit Converter App', 'School Noticeboard (Firebase)', 'Flashcard Study App'],
+  },
+  ug: {
+    ml:       ['Deep Learning / CNN', 'Natural Language Processing', 'Computer Vision', 'Predictive Analytics', 'Neural Networks', 'Data Mining'],
+    web:      ['React / Frontend', 'Node.js / Backend', 'Full-Stack MERN', 'REST APIs', 'PHP & MySQL', 'Django / Flask'],
+    data:     ['Data Analytics', 'Data Visualization', 'EDA & Feature Engineering', 'Statistical Modelling', 'Business Intelligence'],
+    iot:      ['Arduino Projects', 'Raspberry Pi', 'Home Automation', 'Smart Agriculture', 'Wearables', 'MQTT & Cloud IoT'],
+    security: ['Network Security', 'Intrusion Detection System', 'Cryptography', 'Ethical Hacking', 'Malware Analysis'],
+    mobile:   ['Flutter / Dart', 'Android (Java/Kotlin)', 'React Native', 'Firebase Backend', 'Offline-First Apps'],
+  },
+  pg: {
+    ml:       ['Federated Learning', 'Transformer & BERT Models', 'Graph Neural Networks', 'Reinforcement Learning', 'Advanced Computer Vision (YOLO)', 'Advanced NLP Pipelines'],
+    web:      ['Microservices & Kubernetes', 'ML Model Serving (FastAPI)', 'GraphQL / Multi-Tenant SaaS', 'Django REST (Advanced)'],
+    data:     ['Big Data with Apache Spark', 'Bayesian Statistical Inference', 'ETL & Data Pipelines (Airflow)', 'Real-Time Streaming (Kafka)'],
+    iot:      ['Edge AI on Raspberry Pi', 'Precision Agriculture (Drone+Sensors)', 'ECG Signal Processing'],
+    security: ['Zero-Trust Architecture', 'Homomorphic Encryption', 'Penetration Testing Automation', 'Malware Sandbox'],
+    mobile:   ['EHR App with Flutter', 'AR Campus Navigation (Android)', 'Telemedicine with WebRTC'],
+  },
+}
+
+const PROJECT_LEVELS = [
+  { id: 'ug',     label: 'UG Projects',     icon: '🎓', color: 'text-violet-300' },
+  { id: 'pg',     label: 'PG Projects',     icon: '📘', color: 'text-cyan-300'   },
+  { id: 'school', label: 'School Projects', icon: '🏫', color: 'text-emerald-300' },
+]
+
+// ── Mega dropdown component ──────────────────────────────────────────────────
+
+function ProjectMegaMenu({ level, onClose }) {
+  const navigate = useNavigate()
+  const topics   = LEVEL_TOPICS[level.id] || {}
+
+  function go(catId, topic) {
+    const params = new URLSearchParams({ level: level.id, cat: catId })
+    if (topic) params.set('topic', topic)
+    navigate(`/projects?${params.toString()}`)
+    onClose()
+  }
+
+  return (
+    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-0 w-[700px] bg-[#0B1D3A] border border-white/12 rounded-2xl shadow-2xl shadow-black/60 z-50 overflow-hidden">
+      {/* Header */}
+      <div className={`px-6 pt-4 pb-3 border-b border-white/8 flex items-center gap-2`}>
+        <span className="text-xl">{level.icon}</span>
+        <div>
+          <p className={`font-extrabold text-sm ${level.color}`}>{level.label}</p>
+          <p className="text-white/35 text-[10px]">
+            {level.id === 'school' && 'Class 8–12 · Basic programming & hardware'}
+            {level.id === 'ug'     && 'B.Tech / B.E. · Core CS & engineering projects'}
+            {level.id === 'pg'     && 'M.Tech / M.E. · Research-grade advanced projects'}
+          </p>
+        </div>
+      </div>
+      {/* Categories grid */}
+      <div className="p-4 grid grid-cols-3 gap-3">
+        {CATEGORY_BASE.map(cat => (
+          <div key={cat.id} className="bg-white/4 rounded-xl p-3 hover:bg-white/8 transition">
+            <button
+              onClick={() => go(cat.id, '')}
+              className="flex items-center gap-2 text-white font-semibold text-xs mb-2 w-full hover:text-brand-teal transition"
+            >
+              <span>{cat.icon}</span> {cat.label}
+            </button>
+            <ul className="space-y-1">
+              {(topics[cat.id] || []).map(topic => (
+                <li key={topic}>
+                  <button
+                    onClick={() => go(cat.id, topic)}
+                    className="text-white/50 hover:text-white text-[11px] transition text-left w-full"
+                  >
+                    › {topic}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ── Navbar ───────────────────────────────────────────────────────────────────
 
 export default function Navbar() {
-  const [open,          setOpen]          = useState(false)
-  const [scrolled,      setScrolled]      = useState(false)
-  const [projDropOpen,  setProjDropOpen]  = useState(false)
-  const [hoveredLevel,  setHoveredLevel]  = useState('school')
-  const { pathname }                      = useLocation()
-  const navigate                          = useNavigate()
-  const { user, isLoggedIn, logout }      = useAuth()
-  const projDropRef                       = useRef(null)
+  const [open,        setOpen]        = useState(false)
+  const [activeMenu,  setActiveMenu]  = useState(null) // level id or null
+  const [scrolled,    setScrolled]    = useState(false)
+  const { pathname }                  = useLocation()
+  const { user, isLoggedIn, logout }  = useAuth()
+  const menuRef                       = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10)
@@ -20,42 +120,30 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  useEffect(() => { setOpen(false); setProjDropOpen(false) }, [pathname])
+  useEffect(() => { setOpen(false); setActiveMenu(null) }, [pathname])
 
-  // Close projects dropdown on outside click
+  // Close mega menu on outside click
   useEffect(() => {
-    const handler = e => {
-      if (projDropRef.current && !projDropRef.current.contains(e.target))
-        setProjDropOpen(false)
+    function handler(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setActiveMenu(null)
+      }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
 
   const navLinks = [
-    { to: '/',                label: 'Home' },
-    { to: '/project-fit',     label: 'Project Fit' },
-    { to: '/internal-marks',  label: 'Marks' },
-    { to: '/hr-prep',         label: 'HR Prep' },
-    { to: '/resume-builder',  label: 'Resume' },
-    { to: '/coding-practice', label: 'Coding' },
-    { to: '/about',           label: 'About' },
-    { to: '/pricing',         label: 'Pricing' },
-    { to: '/contact',         label: 'Contact Us' },
+    { to: '/',                   label: 'Home' },
+    { to: '/project-fit',        label: 'Project Fit' },
+    { to: '/internal-marks',     label: 'Marks' },
+    { to: '/hr-prep',            label: 'HR Prep' },
+    { to: '/resume-builder',     label: 'Resume' },
+    { to: '/aptitude-practice',  label: 'Aptitude Practice' },
+    { to: '/about',              label: 'About' },
+    { to: '/pricing',            label: 'Pricing' },
+    { to: '/contact',            label: 'Contact Us' },
   ]
-
-  // Level tabs excluding 'all'
-  const levelTabs = levels.filter(l => l.id !== 'all')
-
-  // Topics for a level that have at least one project
-  const topicsForLevel = (levelId) =>
-    categories.filter(c => projects.some(p => p.level === levelId && p.category === c.id))
-
-  const goToTopic = (levelId, catId) => {
-    setProjDropOpen(false)
-    setOpen(false)
-    navigate(`/projects?level=${levelId}&cat=${catId}`)
-  }
 
   const isProjectsActive = pathname === '/projects' || pathname.startsWith('/projects/')
 
@@ -70,7 +158,7 @@ export default function Navbar() {
         : 'bg-[#0B1D3A]/95 backdrop-blur-lg border-b border-white/5'
     }`}>
       <div className="w-full px-5 lg:px-10">
-        <div className="flex items-center h-[60px] relative">
+        <div className="flex items-center h-[60px] relative" ref={menuRef}>
 
           {/* ── Logo ── */}
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
@@ -101,87 +189,31 @@ export default function Navbar() {
               )}
             </NavLink>
 
-            {/* Projects dropdown */}
-            <div className="relative" ref={projDropRef}>
-              <button
-                onClick={() => setProjDropOpen(o => !o)}
-                className={`relative flex items-center gap-1 flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
-                  isProjectsActive || projDropOpen
-                    ? 'text-white bg-white/10'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                Projects
-                <ChevronDown size={13} className={`transition-transform duration-200 ${projDropOpen ? 'rotate-180' : ''}`} />
-                {isProjectsActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />}
-              </button>
+            {/* ── Project level dropdowns ── */}
+            {PROJECT_LEVELS.map(level => (
+              <div key={level.id} className="relative">
+                <button
+                  onClick={() => setActiveMenu(prev => prev === level.id ? null : level.id)}
+                  className={`flex items-center gap-1 flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                    isProjectsActive && activeMenu === level.id
+                      ? 'text-white bg-white/10'
+                      : isProjectsActive
+                        ? 'text-white/90 hover:text-white hover:bg-white/10'
+                        : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {level.label}
+                  <ChevronDown size={13} className={`transition-transform ${activeMenu === level.id ? 'rotate-180' : ''}`} />
+                  {isProjectsActive && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-brand-orange rounded-full" />}
+                </button>
 
-              {/* Cascading two-tier dropdown */}
-              {projDropOpen && (
-                <div className="absolute top-full left-0 mt-2 flex shadow-2xl z-50 rounded-xl overflow-visible"
-                     style={{ filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }}>
+                {activeMenu === level.id && (
+                  <ProjectMegaMenu level={level} onClose={() => setActiveMenu(null)} />
+                )}
+              </div>
+            ))}
 
-                  {/* Tier 1 — Level list */}
-                  <div className="bg-[#0d2240] border border-white/10 rounded-l-xl w-48 py-1.5 flex-shrink-0">
-                    <p className="px-4 pt-1.5 pb-2 text-white/30 text-[10px] font-bold uppercase tracking-widest">
-                      Select Level
-                    </p>
-                    {levelTabs.map(lv => {
-                      const isHov = hoveredLevel === lv.id
-                      return (
-                        <button
-                          key={lv.id}
-                          onMouseEnter={() => setHoveredLevel(lv.id)}
-                          className={`w-full flex items-center gap-2 px-4 py-2.5 text-left transition-all ${
-                            isHov
-                              ? 'bg-brand-orange/15 text-white border-l-2 border-brand-orange'
-                              : 'text-white/65 hover:text-white border-l-2 border-transparent'
-                          }`}
-                        >
-                          <span className="flex-1 text-sm font-semibold">{lv.label}</span>
-                          <span className={`text-[11px] font-bold px-1.5 py-0.5 rounded-full ${
-                            isHov ? 'bg-brand-orange text-white' : 'bg-white/10 text-white/40'
-                          }`}>
-                            {projects.filter(p => p.level === lv.id).length}
-                          </span>
-                          <span className={`text-xs ${isHov ? 'text-brand-orange' : 'text-white/20'}`}>▶</span>
-                        </button>
-                      )
-                    })}
-                  </div>
-
-                  {/* Tier 2 — Topics for hovered level */}
-                  <div className="bg-[#112d52] border border-l-0 border-white/10 rounded-r-xl w-52 py-1.5 flex-shrink-0">
-                    {(() => {
-                      const lv     = levelTabs.find(l => l.id === hoveredLevel)
-                      const topics = topicsForLevel(hoveredLevel)
-                      return (
-                        <>
-                          <p className="px-4 pt-1.5 pb-2 text-white/30 text-[10px] font-bold uppercase tracking-widest">
-                            {lv?.label} Topics
-                          </p>
-                          {topics.map(cat => {
-                            const count = projects.filter(p => p.level === hoveredLevel && p.category === cat.id).length
-                            return (
-                              <button
-                                key={cat.id}
-                                onClick={() => goToTopic(hoveredLevel, cat.id)}
-                                className="w-full flex items-center gap-2 px-4 py-2.5 text-left text-white/65 hover:bg-white/8 hover:text-white transition-all group"
-                              >
-                                <span className="flex-1 text-sm font-medium group-hover:text-white">{cat.label}</span>
-                                <span className="text-[11px] text-white/25 group-hover:text-white/60 font-semibold">{count}</span>
-                              </button>
-                            )
-                          })}
-                        </>
-                      )
-                    })()}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Rest of nav links */}
+            {/* Rest of nav links (skip Home) */}
             {navLinks.filter(l => l.to !== '/').map(l => (
               <NavLink
                 key={l.to}
@@ -203,11 +235,10 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* ── Right section — pushed to far right ── */}
+          {/* ── Right section ── */}
           <div className="hidden xl:flex items-center gap-2 flex-shrink-0 ml-auto">
             {isLoggedIn ? (
               <div className="flex items-center gap-2">
-                {/* Avatar + name */}
                 <div className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-teal to-cyan-600 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                     {initials}
@@ -216,7 +247,6 @@ export default function Navbar() {
                     {user?.name}
                   </span>
                 </div>
-                {/* Logout */}
                 <button
                   onClick={logout}
                   title="Sign out"
@@ -262,7 +292,7 @@ export default function Navbar() {
 
       {/* ── Mobile drawer ── */}
       {open && (
-        <div className="xl:hidden bg-[#0B1D3A] border-t border-white/8 px-4 py-3 space-y-0.5 shadow-2xl">
+        <div className="xl:hidden bg-[#0B1D3A] border-t border-white/8 px-4 py-3 space-y-0.5 shadow-2xl max-h-[80vh] overflow-y-auto">
           {/* Home */}
           <NavLink
             to="/"
@@ -274,35 +304,45 @@ export default function Navbar() {
             }
           >Home</NavLink>
 
-          {/* Projects — expandable in mobile */}
-          <div>
-            <button
-              onClick={() => setProjDropOpen(o => !o)}
-              className="w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/7 transition"
-            >
-              Projects
-              <ChevronDown size={13} className={`ml-auto transition-transform ${projDropOpen ? 'rotate-180 text-brand-orange' : ''}`} />
-            </button>
-            {projDropOpen && (
-              <div className="ml-3 mt-0.5 space-y-3 pb-2">
-                {levelTabs.map(lv => (
-                  <div key={lv.id}>
-                    <p className="px-3 py-1 text-white/40 text-[11px] font-bold uppercase tracking-wider">{lv.label}</p>
-                    {topicsForLevel(lv.id).map(cat => (
-                      <button
-                        key={cat.id}
-                        onClick={() => goToTopic(lv.id, cat.id)}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/7 text-sm transition"
+          {/* Project levels in mobile */}
+          {PROJECT_LEVELS.map(level => (
+            <div key={level.id}>
+              <button
+                onClick={() => setActiveMenu(prev => prev === level.id ? null : level.id)}
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-white/60 hover:text-white hover:bg-white/7 transition"
+              >
+                <span>{level.icon} {level.label}</span>
+                <ChevronDown size={13} className={`transition-transform ${activeMenu === level.id ? 'rotate-180' : ''}`} />
+              </button>
+              {activeMenu === level.id && (
+                <div className="ml-3 mb-2 space-y-2 border-l border-white/10 pl-3">
+                  {CATEGORY_BASE.map(cat => (
+                    <div key={cat.id}>
+                      <Link
+                        to={`/projects?level=${level.id}&cat=${cat.id}`}
+                        className="flex items-center gap-1.5 text-white/70 font-semibold text-xs py-1"
+                        onClick={() => setOpen(false)}
                       >
-                        <span>{cat.label}</span>
-                        <span className="ml-auto text-white/30 text-xs">{projects.filter(p => p.level === lv.id && p.category === cat.id).length}</span>
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+                        {cat.icon} {cat.label}
+                      </Link>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {(LEVEL_TOPICS[level.id]?.[cat.id] || []).map(topic => (
+                          <Link
+                            key={topic}
+                            to={`/projects?level=${level.id}&cat=${cat.id}&topic=${encodeURIComponent(topic)}`}
+                            className="text-white/40 hover:text-white text-[10px] px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 transition"
+                            onClick={() => setOpen(false)}
+                          >
+                            {topic}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
 
           {navLinks.filter(l => l.to !== '/').map(l => (
             <NavLink

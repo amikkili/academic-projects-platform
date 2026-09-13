@@ -14,12 +14,12 @@ function DigitBox({ digit }) {
 }
 
 function VisitorCounter() {
-  const [count, setCount] = useState(null)
+  const cached = (() => { try { return localStorage.getItem('ac_visitor_count') } catch { return null } })()
+  const [count, setCount] = useState(cached ? Number(cached) : null)
 
   useEffect(() => {
     async function run() {
       try {
-        // Ping once per day per browser
         const today = new Date().toISOString().slice(0, 10)
         const lastPing = localStorage.getItem('ac_visitor_ping')
         if (lastPing !== today) {
@@ -28,20 +28,22 @@ function VisitorCounter() {
             const data = await res.json()
             setCount(data.count)
             localStorage.setItem('ac_visitor_ping', today)
+            localStorage.setItem('ac_visitor_count', String(data.count))
             return
           }
         }
-        // Already pinged today — just get count
         const res = await fetch(`${API_BASE}/stats/visitors`)
-        if (res.ok) setCount((await res.json()).count)
-      } catch { /* backend not running — show nothing */ }
+        if (res.ok) {
+          const data = await res.json()
+          setCount(data.count)
+          localStorage.setItem('ac_visitor_count', String(data.count))
+        }
+      } catch { /* backend offline — show cached */ }
     }
     run()
   }, [])
 
-  if (count === null) return null
-
-  const digits = String(count).padStart(6, '0').split('')
+  const digits = String(count ?? 0).padStart(6, '0').split('')
 
   return (
     <div className="flex items-center gap-2 mt-3">

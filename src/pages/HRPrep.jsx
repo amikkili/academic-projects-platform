@@ -531,16 +531,13 @@ export default function HRPrep() {
     <div className="min-h-screen bg-slate-50">
 
       {/* Hero */}
-      <div className="hero-bg py-16 pt-28">
+      <div className="hero-bg py-10 pt-20">
         <div className="max-w-3xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-brand-orange text-sm font-semibold mb-5">
-            <MessageCircle size={14} /> HR Round Prep
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
-            Crack Your HR Round<br className="hidden sm:block" /> with Confidence
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-2 leading-tight">
+            Crack Your HR Round with Confidence
           </h1>
-          <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-            Build your 60-second pitch, master the STAR method, and prepare for all {totalQ} common HR and behavioural questions interviewers actually ask.
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
+            60-second pitch, STAR method, and {totalQ} common HR questions interviewers actually ask.
           </p>
         </div>
       </div>
