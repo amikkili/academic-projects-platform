@@ -139,10 +139,10 @@ export default function Navbar() {
     { to: '/internal-marks',     label: 'Marks' },
     { to: '/hr-prep',            label: 'HR Prep' },
     { to: '/resume-builder',     label: 'Resume' },
-    { to: '/aptitude-practice',  label: 'Aptitude Practice' },
+    { to: '/aptitude-practice',  label: 'Aptitude' },
     { to: '/about',              label: 'About' },
     { to: '/pricing',            label: 'Pricing' },
-    { to: '/contact',            label: 'Contact Us' },
+    { to: '/contact',            label: 'Contact' },
   ]
 
   const isProjectsActive = pathname === '/projects' || pathname.startsWith('/projects/')
@@ -172,14 +172,14 @@ export default function Navbar() {
           </Link>
 
           {/* ── Nav links — centered absolutely ── */}
-          <div className="hidden xl:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
+          <div className="hidden xl:flex items-center gap-0 absolute left-1/2 -translate-x-1/2">
 
             {/* Home */}
             <NavLink
               to="/"
               end
               className={({ isActive }) =>
-                `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                `relative flex-shrink-0 px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap ${
                   isActive ? 'text-white bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
                 }`
               }
@@ -194,7 +194,7 @@ export default function Navbar() {
               <div key={level.id} className="relative">
                 <button
                   onClick={() => setActiveMenu(prev => prev === level.id ? null : level.id)}
-                  className={`flex items-center gap-1 flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                  className={`flex items-center gap-0.5 flex-shrink-0 px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap ${
                     isProjectsActive && activeMenu === level.id
                       ? 'text-white bg-white/10'
                       : isProjectsActive
@@ -220,7 +220,7 @@ export default function Navbar() {
                 to={l.to}
                 end={l.to === '/'}
                 className={({ isActive }) =>
-                  `relative flex-shrink-0 px-3 py-1.5 rounded-lg text-[15px] font-semibold transition-all duration-150 whitespace-nowrap ${
+                  `relative flex-shrink-0 px-2.5 py-1 rounded-lg text-[13px] font-semibold transition-all duration-150 whitespace-nowrap ${
                     isActive ? 'text-white bg-white/10' : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`
                 }
@@ -259,7 +259,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-1.5 px-5 py-2 text-white hover:bg-white/10 border border-white/30 hover:border-white/60 rounded-xl text-[15px] font-semibold transition-all"
+                className="flex items-center gap-1.5 px-4 py-1.5 text-white hover:bg-white/10 border border-white/30 hover:border-white/60 rounded-xl text-[13px] font-semibold transition-all"
               >
                 <LogIn size={15} />
                 Sign In

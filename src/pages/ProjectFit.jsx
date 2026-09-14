@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  CheckSquare, Square, ChevronRight, Zap, Search,
-  Trophy, Star, AlertTriangle, XCircle, RefreshCw,
+  Check, ChevronDown, ChevronRight, Zap, Search,
+  Trophy, Star, RefreshCw,
   BookOpen, Mic2, Clock, BarChart2, ArrowRight, MessageCircle, Wrench,
 } from 'lucide-react'
 import { projects, categories, difficultyColors } from '../data/projects'
@@ -14,21 +14,19 @@ function waLink(title) {
   return `https://wa.me/${WHATSAPP}?text=${msg}`
 }
 
-// ── Skill checkbox ────────────────────────────────────────────────────────────
+// ── Skill pill ────────────────────────────────────────────────────────────────
 
 function SkillChip({ skill, checked, onToggle }) {
   return (
     <button
       onClick={() => onToggle(skill)}
-      className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-medium transition-all active:scale-95 ${
+      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-[13px] font-medium transition-all active:scale-95 ${
         checked
-          ? 'bg-brand-navy border-brand-navy text-white shadow-md'
-          : 'bg-white border-slate-200 text-slate-600 hover:border-brand-navy hover:text-brand-navy'
+          ? 'bg-brand-navy border-brand-navy text-white shadow-sm'
+          : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-brand-navy/50 hover:bg-white'
       }`}
     >
-      {checked
-        ? <CheckSquare size={14} className="flex-shrink-0" />
-        : <Square      size={14} className="flex-shrink-0 opacity-40" />}
+      {checked && <Check size={11} className="shrink-0" strokeWidth={3} />}
       {skill}
     </button>
   )
@@ -165,9 +163,11 @@ function FitCard({ project, matchData, rank }) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ProjectFit() {
-  const [selected, setSelected]     = useState(new Set())
+  const [selected, setSelected]       = useState(new Set())
   const [showResults, setShowResults] = useState(false)
-  const [filterFit, setFilterFit]   = useState('all')
+  const [filterFit, setFilterFit]     = useState('all')
+  // All categories open by default
+  const [openCats, setOpenCats]       = useState(() => new Set(skillCategories.map(c => c.id)))
 
   const toggleSkill = (skill) => {
     setSelected(prev => {
@@ -176,6 +176,14 @@ export default function ProjectFit() {
       return next
     })
     setShowResults(false)
+  }
+
+  const toggleCat = (id) => {
+    setOpenCats(prev => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
   }
 
   const selectAll = (catSkills) => {
@@ -225,55 +233,79 @@ export default function ProjectFit() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-24 sm:pb-10 space-y-8">
 
         {/* ── Skills Picker ── */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-7">
-          <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <div>
-              <h2 className="text-xl font-bold text-[#0B1D3A]">What do you already know?</h2>
-              <p className="text-slate-400 text-sm mt-0.5">
-                {selected.size > 0
-                  ? `${selected.size} skill${selected.size > 1 ? 's' : ''} selected`
-                  : 'Select every technology and concept you are comfortable with'}
-              </p>
-            </div>
-            {selected.size > 0 && (
-              <button onClick={clearAll} className="flex items-center gap-1.5 text-slate-400 hover:text-slate-600 text-sm transition">
-                <RefreshCw size={13} /> Clear all
-              </button>
-            )}
-          </div>
-
-          <div className="space-y-6">
-            {skillCategories.map(cat => (
-              <div key={cat.id}>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-semibold text-slate-600 flex items-center gap-1.5">
-                    <span>{cat.icon}</span> {cat.label}
-                  </p>
-                  <button
-                    onClick={() => selectAll(cat.skills)}
-                    className="text-xs text-brand-navy font-medium hover:text-brand-orange transition"
-                  >
-                    Select all
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+          {/* Header */}
+          <div className="px-5 pt-6 pb-4 sm:px-7 sm:pt-7">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg sm:text-xl font-bold text-[#0B1D3A]">What do you already know?</h2>
+                <p className="text-slate-400 text-sm mt-0.5">
+                  Select every technology and concept you are comfortable with
+                </p>
+              </div>
+              {selected.size > 0 && (
+                <div className="flex items-center gap-3 shrink-0 mt-0.5">
+                  <span className="bg-brand-navy text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                    {selected.size} selected
+                  </span>
+                  <button onClick={clearAll} className="text-slate-400 hover:text-slate-600 transition" title="Clear all">
+                    <RefreshCw size={14} />
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {cat.skills.map(skill => (
-                    <SkillChip
-                      key={skill}
-                      skill={skill}
-                      checked={selected.has(skill)}
-                      onToggle={toggleSkill}
-                    />
-                  ))}
-                </div>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          {/* Category accordions */}
+          <div className="divide-y divide-slate-100">
+            {skillCategories.map(cat => {
+              const catCount = cat.skills.filter(s => selected.has(s)).length
+              const isOpen   = openCats.has(cat.id)
+              return (
+                <div key={cat.id}>
+                  {/* Category header — tap to toggle */}
+                  <button
+                    onClick={() => toggleCat(cat.id)}
+                    className="w-full flex items-center justify-between px-5 py-3.5 sm:px-7 hover:bg-slate-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-base leading-none">{cat.icon}</span>
+                      <span className="text-sm font-semibold text-slate-700">{cat.label}</span>
+                      {catCount > 0 && (
+                        <span className="bg-brand-navy text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center leading-none">
+                          {catCount}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronDown
+                      size={16}
+                      className={`text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  {/* Skills grid */}
+                  {isOpen && (
+                    <div className="px-5 pb-4 pt-1 sm:px-7 flex flex-wrap gap-2">
+                      {cat.skills.map(skill => (
+                        <SkillChip
+                          key={skill}
+                          skill={skill}
+                          checked={selected.has(skill)}
+                          onToggle={toggleSkill}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Footer CTA — desktop only (mobile uses fixed bar below) */}
+          <div className="hidden sm:flex px-7 py-5 border-t border-slate-100 items-center justify-between gap-4">
             <p className="text-slate-500 text-sm">
               {selected.size === 0
                 ? 'Select at least one skill to see recommendations'
@@ -291,6 +323,27 @@ export default function ProjectFit() {
               <Search size={16} /> Find My Projects
             </button>
           </div>
+        </div>
+
+        {/* ── Fixed mobile bottom bar ── */}
+        <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-3">
+          {selected.size > 0 && (
+            <span className="text-xs text-slate-500 font-medium shrink-0">
+              {selected.size} skill{selected.size > 1 ? 's' : ''}
+            </span>
+          )}
+          <button
+            onClick={() => { if (selected.size > 0) setShowResults(true) }}
+            disabled={selected.size === 0}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold text-sm transition-all ${
+              selected.size > 0
+                ? 'bg-brand-orange text-white active:scale-95 shadow-md shadow-amber-200'
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+            }`}
+          >
+            <Search size={15} />
+            {selected.size > 0 ? `Find Projects` : 'Select skills above'}
+          </button>
         </div>
 
         {/* ── Results ── */}
@@ -405,7 +458,7 @@ export default function ProjectFit() {
           <div className="space-y-4">
             <div className="grid sm:grid-cols-3 gap-4">
               {[
-                { icon: CheckSquare, title: 'Select Your Skills', desc: 'Check every technology you know — languages, frameworks, tools, databases.' },
+                { icon: Check, title: 'Select Your Skills', desc: 'Check every technology you know — languages, frameworks, tools, databases.' },
                 { icon: BarChart2,   title: 'Jaccard Similarity Score', desc: 'Each project is ranked by how much of its required skill set you already cover.' },
                 { icon: Trophy,      title: 'Find Your Sweet Spot',     desc: 'Aim for 🟡 Stretch Projects (50-80%) — you grow fastest building projects that challenge you just enough.' },
               ].map(({ icon: Icon, title, desc }) => (

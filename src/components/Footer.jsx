@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom'
 import { Code2, Github, Twitter, Linkedin, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { API_BASE } from '../lib/api'
+import { supabase } from '../lib/supabase'
 
-// ── Visitor counter ───────────────────────────────────────────────────────────
+// ── Visitor counter (Supabase-backed) ────────────────────────────────────────
+// Requires in Supabase:
+//   CREATE TABLE site_stats (key TEXT PRIMARY KEY, value BIGINT DEFAULT 0);
+//   INSERT INTO site_stats (key, value) VALUES ('visitor_count', 0);
+//   CREATE OR REPLACE FUNCTION increment_visitor_count()
+//     RETURNS bigint LANGUAGE sql SECURITY DEFINER AS $$
+//       UPDATE site_stats SET value = value + 1 WHERE key = 'visitor_count' RETURNING value;
+//     $$;
+//   ALTER TABLE site_stats ENABLE ROW LEVEL SECURITY;
+//   CREATE POLICY "anon read" ON site_stats FOR SELECT TO anon USING (true);
 
 function DigitBox({ digit }) {
   return (
@@ -22,23 +31,31 @@ function VisitorCounter() {
       try {
         const today = new Date().toISOString().slice(0, 10)
         const lastPing = localStorage.getItem('ac_visitor_ping')
+
         if (lastPing !== today) {
-          const res = await fetch(`${API_BASE}/stats/visitors/ping`, { method: 'POST' })
-          if (res.ok) {
-            const data = await res.json()
-            setCount(data.count)
+          // Atomic increment via Supabase RPC
+          const { data, error } = await supabase.rpc('increment_visitor_count')
+          if (!error && data != null) {
+            const n = Number(data)
+            setCount(n)
             localStorage.setItem('ac_visitor_ping', today)
-            localStorage.setItem('ac_visitor_count', String(data.count))
+            localStorage.setItem('ac_visitor_count', String(n))
             return
           }
         }
-        const res = await fetch(`${API_BASE}/stats/visitors`)
-        if (res.ok) {
-          const data = await res.json()
-          setCount(data.count)
-          localStorage.setItem('ac_visitor_count', String(data.count))
+
+        // Just read the current count
+        const { data, error } = await supabase
+          .from('site_stats')
+          .select('value')
+          .eq('key', 'visitor_count')
+          .single()
+        if (!error && data) {
+          const n = Number(data.value)
+          setCount(n)
+          localStorage.setItem('ac_visitor_count', String(n))
         }
-      } catch { /* backend offline — show cached */ }
+      } catch { /* show cached value if offline */ }
     }
     run()
   }, [])

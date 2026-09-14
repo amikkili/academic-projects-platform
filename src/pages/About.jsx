@@ -1,11 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Code2, BookOpen, Mic2, Users, Target, Heart, ArrowRight } from 'lucide-react'
-
-const team = [
-  { name: 'Anil Kumar', role: 'Founder & Developer', initials: 'AK' },
-  { name: 'Priya Sharma', role: 'Content Lead', initials: 'PS' },
-  { name: 'Rahul Verma', role: 'ML Engineer', initials: 'RV' },
-]
+import { Code2, BookOpen, Mic2, Users, Target, ArrowRight } from 'lucide-react'
 
 export default function About() {
   return (
@@ -85,27 +79,6 @@ export default function About() {
                 </div>
                 <h3 className="font-bold text-[#0B1D3A] text-lg mb-2">{title}</h3>
                 <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Team */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 text-red-500 font-semibold text-sm mb-5">
-            <Heart size={14} fill="currentColor" /> Made with passion
-          </div>
-          <h2 className="text-3xl font-extrabold text-[#0B1D3A] mb-10">Meet the Team</h2>
-          <div className="flex flex-wrap justify-center gap-8">
-            {team.map(({ name, role, initials }) => (
-              <div key={name} className="text-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-brand-navy to-brand-blue text-white text-2xl font-bold flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  {initials}
-                </div>
-                <p className="font-bold text-[#0B1D3A]">{name}</p>
-                <p className="text-slate-500 text-sm">{role}</p>
               </div>
             ))}
           </div>
